@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "Hooked"
 include(":app")
- 
+include(":core")
+include(":core:common")
