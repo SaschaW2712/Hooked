@@ -1,10 +1,10 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
 }
 
 android {
-    namespace = "com.saschaw.core.model"
+    namespace = "com.saschaw.hooked.core.model"
     compileSdk = 34
 }
 

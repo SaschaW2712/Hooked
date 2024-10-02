@@ -1,5 +1,5 @@
 [versions]
-agp = "8.2.2"
+agp = "8.5.0"
 appcompat = "1.7.0"
 coreKtx = "1.13.1"
 espressoCore = "3.6.1"
@@ -35,6 +35,7 @@ androidx-navigationCompose = { group = "androidx.navigation", name = "navigation
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-serialization" }
