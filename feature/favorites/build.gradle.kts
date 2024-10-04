@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.saschaw.hooked.feature.browse"
+    namespace = "com.saschaw.hooked.feature.favorites"
     compileSdk = 34
 }
 

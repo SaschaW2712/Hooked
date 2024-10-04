@@ -58,6 +58,7 @@ dependencies {
     ksp(libs.dagger.hilt.compiler)
 
     implementation(project(":feature:browse"))
+    implementation(project(":feature:favorites"))
 
     implementation(libs.androidx.compose.material3.adaptive.layout)
     implementation(libs.androidx.compose.material3.adaptive.navigation)

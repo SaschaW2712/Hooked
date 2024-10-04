@@ -1,4 +1,4 @@
-package com.saschaw.hooked.feature.browse.nav
+package com.saschaw.hooked.feature.browse.navigation
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder

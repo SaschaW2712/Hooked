@@ -4,7 +4,8 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.saschaw.hooked.R
 import com.saschaw.hooked.core.designsystem.HookedIcons
-import com.saschaw.hooked.feature.browse.nav.BrowseRoute
+import com.saschaw.hooked.feature.browse.navigation.BrowseRoute
+import com.saschaw.hooked.feature.favorites.navigation.FavoritesRoute
 import kotlin.reflect.KClass
 
 enum class TopLevelDestination(
@@ -21,18 +22,11 @@ enum class TopLevelDestination(
         titleTextId = R.string.browse_label,
         route = BrowseRoute::class,
     ),
-//    BOOKMARKS(
-//        selectedIcon = NiaIcons.Bookmarks,
-//        unselectedIcon = NiaIcons.BookmarksBorder,
-//        iconTextId = bookmarksR.string.feature_bookmarks_title,
-//        titleTextId = bookmarksR.string.feature_bookmarks_title,
-//        route = BookmarksRoute::class,
-//    ),
-//    INTERESTS(
-//        selectedIcon = NiaIcons.Grid3x3,
-//        unselectedIcon = NiaIcons.Grid3x3,
-//        iconTextId = searchR.string.feature_search_interests,
-//        titleTextId = searchR.string.feature_search_interests,
-//        route = InterestsRoute::class,
-//    ),
+    FAVORITES(
+        selectedIcon = HookedIcons.Browse,
+        unselectedIcon = HookedIcons.BrowseOutlined,
+        iconTextId = R.string.favorites_icon_desc,
+        titleTextId = R.string.favorites_label,
+        route = FavoritesRoute::class,
+    ),
 }

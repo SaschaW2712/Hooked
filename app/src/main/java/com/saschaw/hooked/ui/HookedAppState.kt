@@ -11,9 +11,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.saschaw.hooked.feature.browse.nav.navigateToBrowse
+import com.saschaw.hooked.feature.browse.navigation.navigateToBrowse
+import com.saschaw.hooked.feature.favorites.navigation.navigateToFavorites
 import com.saschaw.hooked.navigation.TopLevelDestination
 import com.saschaw.hooked.navigation.TopLevelDestination.BROWSE
+import com.saschaw.hooked.navigation.TopLevelDestination.FAVORITES
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -74,6 +76,7 @@ class HookedAppState(
 
         when (destination) {
             BROWSE -> navController.navigateToBrowse(options)
+            FAVORITES -> navController.navigateToFavorites(options)
         }
     }
 }

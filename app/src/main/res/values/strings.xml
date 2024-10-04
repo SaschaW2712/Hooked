@@ -4,4 +4,7 @@
     <!-- Strings used for fragments for navigation -->
     <string name="browse_icon_desc">Browse</string>
     <string name="browse_label">Browse</string>
+    <string name="favorites_icon_desc">Favorites</string>
+    <string name="favorites_label">Favorites</string>
+
 </resources>
