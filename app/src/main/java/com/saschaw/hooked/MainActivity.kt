@@ -6,6 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.saschaw.hooked.ui.HookedApp
+import com.saschaw.hooked.ui.rememberHookedAppState
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -14,9 +16,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         setContent {
-//            val appState = rememberHookedAppState()
-//            HookedApp(appState)
-            RootView()
+            val appState = rememberHookedAppState()
+            HookedApp(appState)
         }
     }
 }

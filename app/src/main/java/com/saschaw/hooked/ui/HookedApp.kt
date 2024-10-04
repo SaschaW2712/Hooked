@@ -23,19 +23,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -130,25 +124,6 @@ internal fun HookedApp(
 
                 if (destination != null) {
                     shouldShowTopAppBar = true
-//                    HookedTopAppBar(
-//                        titleRes = destination.titleTextId,
-//                        navigationIcon = HookedIcons.Search,
-//                        navigationIconContentDescription =
-//                            stringResource(
-//                                id = settingsR.string.feature_settings_top_app_bar_navigation_icon_description,
-//                            ),
-//                        actionIcon = HookedIcons.Settings,
-//                        actionIconContentDescription =
-//                            stringResource(
-//                                id = settingsR.string.feature_settings_top_app_bar_action_icon_description,
-//                            ),
-//                        colors =
-//                            TopAppBarDefaults.centerAlignedTopAppBarColors(
-//                                containerColor = Color.Transparent,
-//                            ),
-//                        onActionClick = { onTopAppBarActionClick() },
-//                        onNavigationClick = { appState.navigateToSearch() },
-//                    )
 
                     TopAppBar(
                         title = { Text("Hooked") },
@@ -185,27 +160,6 @@ internal fun HookedApp(
         }
     }
 }
-
-private fun Modifier.notificationDot(): Modifier =
-    composed {
-        val tertiaryColor = MaterialTheme.colorScheme.tertiary
-        drawWithContent {
-            drawContent()
-            drawCircle(
-                tertiaryColor,
-                radius = 5.dp.toPx(),
-                // This is based on the dimensions of the NavigationBar's "indicator pill";
-                // however, its parameters are private, so we must depend on them implicitly
-                // (NavigationBarTokens.ActiveIndicatorWidth = 64.dp)
-                center =
-                    center +
-                        Offset(
-                            64.dp.toPx() * .45f,
-                            32.dp.toPx() * -.45f - 6.dp.toPx(),
-                        ),
-            )
-        }
-    }
 
 private fun NavDestination?.isRouteInHierarchy(route: KClass<*>) =
     this?.hierarchy?.any {

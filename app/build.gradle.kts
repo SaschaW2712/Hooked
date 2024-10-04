@@ -8,13 +8,13 @@ plugins {
 
 android {
     namespace = "com.saschaw.hooked"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.saschaw.hooked"
         minSdk = 27
         multiDexEnabled = true
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "0.1"
 
@@ -52,9 +52,11 @@ dependencies {
     implementation(libs.material)
     implementation(libs.kotlinx.datetime)
     implementation(libs.dagger.hilt.android)
+    implementation(libs.androidx.material3.adaptive.navigation.suite.android)
+    implementation(project(":core:common"))
+    implementation(project(":core:designsystem"))
     ksp(libs.dagger.hilt.compiler)
 
-    implementation(project(":core:designsystem"))
     implementation(project(":feature:browse"))
 
     implementation(libs.androidx.compose.material3.adaptive.layout)
