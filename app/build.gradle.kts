@@ -42,11 +42,18 @@ android {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.kotlin.serialization.json)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigationCompose)
     implementation(libs.androidx.compose.m3)
     implementation(libs.androidx.compose.tooling)
     implementation(libs.material)
+    implementation(libs.kotlinx.datetime)
+    implementation(project(":core:designsystem"))
+    implementation(project(":feature:browse"))
+
+    implementation(libs.androidx.compose.material3.adaptive.layout)
+    implementation(libs.androidx.compose.material3.adaptive.navigation)
+    implementation(libs.androidx.adaptive.android)
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
