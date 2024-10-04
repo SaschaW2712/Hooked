@@ -32,5 +32,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroid_Preview() {
-    RootView()
+    HookedApp(rememberHookedAppState())
 }
