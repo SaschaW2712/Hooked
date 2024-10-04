@@ -12,7 +12,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
+
         setContent {
+//            val appState = rememberHookedAppState()
+//            HookedApp(appState)
             RootView()
         }
     }

@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.dagger.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -11,6 +13,7 @@ android {
     defaultConfig {
         applicationId = "com.saschaw.hooked"
         minSdk = 27
+        multiDexEnabled = true
         targetSdk = 35
         versionCode = 1
         versionName = "0.1"
@@ -48,6 +51,9 @@ dependencies {
     implementation(libs.androidx.compose.tooling)
     implementation(libs.material)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.dagger.hilt.android)
+    ksp(libs.dagger.hilt.compiler)
+
     implementation(project(":core:designsystem"))
     implementation(project(":feature:browse"))
 
