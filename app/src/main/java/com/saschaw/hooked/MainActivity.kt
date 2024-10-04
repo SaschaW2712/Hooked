@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.saschaw.hooked.core.designsystem.theme.HookedTheme
 import com.saschaw.hooked.ui.HookedApp
 import com.saschaw.hooked.ui.rememberHookedAppState
 
@@ -17,7 +18,10 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val appState = rememberHookedAppState()
-            HookedApp(appState)
+
+            HookedTheme {
+                HookedApp(appState)
+            }
         }
     }
 }

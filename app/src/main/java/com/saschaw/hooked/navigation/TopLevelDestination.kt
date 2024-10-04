@@ -23,8 +23,8 @@ enum class TopLevelDestination(
         route = BrowseRoute::class,
     ),
     FAVORITES(
-        selectedIcon = HookedIcons.Browse,
-        unselectedIcon = HookedIcons.BrowseOutlined,
+        selectedIcon = HookedIcons.Favorite,
+        unselectedIcon = HookedIcons.FavoriteOutlined,
         iconTextId = R.string.favorites_icon_desc,
         titleTextId = R.string.favorites_label,
         route = FavoritesRoute::class,

@@ -12,17 +12,20 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalAbsoluteTonalElevation
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration.Short
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult.ActionPerformed
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -30,6 +33,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -46,12 +51,22 @@ fun HookedApp(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    HookedApp(
-        appState = appState,
-        snackbarHostState = snackbarHostState,
-        modifier = modifier,
-        windowAdaptiveInfo = windowAdaptiveInfo,
-    )
+    val color = MaterialTheme.colorScheme.background
+    val tonalElevation = LocalAbsoluteTonalElevation.current
+    Surface(
+        color = if (color == Color.Unspecified) Color.Transparent else color,
+        tonalElevation = if (tonalElevation == Dp.Unspecified) 0.dp else tonalElevation,
+        modifier = modifier.fillMaxSize(),
+    ) {
+        CompositionLocalProvider(LocalAbsoluteTonalElevation provides 0.dp) {
+            HookedApp(
+                appState = appState,
+                snackbarHostState = snackbarHostState,
+                modifier = modifier,
+                windowAdaptiveInfo = windowAdaptiveInfo,
+            )
+        }
+    }
 }
 
 @Suppress("ktlint:standard:function-naming")
