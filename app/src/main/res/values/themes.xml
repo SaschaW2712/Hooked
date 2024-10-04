@@ -7,4 +7,10 @@
     <style name="Theme.Hooked" parent="Base.Theme.Hooked">
         <item name="android:windowDisablePreview">true</item>
     </style>
+
+    <style name="Theme.Hooked.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">#FFFFFF</item>
+        <item name="postSplashScreenTheme">@style/Theme.Hooked</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/app_splash</item>
+    </style>
 </resources>
