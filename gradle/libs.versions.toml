@@ -21,6 +21,7 @@ daggerHilt = '2.52'
 ksp =  '2.0.20-1.0.25'
 splashScreen = '1.0.1'
 googleFonts = "1.7.3"
+uiTooling = "1.7.3"
 
 
 
@@ -48,6 +49,7 @@ dagger-hilt-android = { module =  "com.google.dagger:hilt-android", version.ref 
 dagger-hilt-compiler = { module =  "com.google.dagger:hilt-compiler", version.ref = "daggerHilt" }
 androidx-core-splashScreen = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen"}
 androidx-compose-ui-googleFonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "googleFonts" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 
 
 [plugins]
