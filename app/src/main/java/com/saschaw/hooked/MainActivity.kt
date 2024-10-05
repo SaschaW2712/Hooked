@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -86,6 +87,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+
 fun performTokenRequest(
     authService: AuthorizationService,
     clientAuthentication: ClientAuthentication,
@@ -104,12 +106,6 @@ fun performTokenRequest(
         }
     }
 }
-
-data class ResponseThing(
-    val code: String,
-    val scope: String,
-    val state: String
-)
 
 object AuthConfig {
     const val AUTH_URI = "https://www.ravelry.com/oauth2/auth"

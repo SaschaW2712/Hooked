@@ -6,7 +6,7 @@
     </style>
 
     <style name="Theme.Hooked.Splash" parent="Theme.SplashScreen">
-        <item name="windowSplashScreenBackground">#FFFFFF</item>
+        <item name="windowSplashScreenBackground">#F8FDFF</item>
         <item name="postSplashScreenTheme">@style/Theme.Hooked</item>
         <item name="windowSplashScreenAnimatedIcon">@drawable/app_splash</item>
     </style>
