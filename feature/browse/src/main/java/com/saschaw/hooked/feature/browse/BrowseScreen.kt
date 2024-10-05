@@ -1,5 +1,6 @@
 package com.saschaw.hooked.feature.browse
 
+import HookedButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -16,8 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.saschaw.hooked.core.designsystem.components.HookedButton
-import com.saschaw.hooked.core.designsystem.components.HookedButtonStyle
 
 @Suppress("ktlint:standard:function-naming")
 @Composable

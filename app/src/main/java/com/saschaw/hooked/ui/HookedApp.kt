@@ -117,11 +117,9 @@ internal fun HookedApp(
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             snackbarHost = { SnackbarHost(snackbarHostState) },
             topBar = {
-                if (destination != null) {
-                    TopAppBar(
-                        title = { Text("Hooked") },
-                    )
-                }
+                TopAppBar(
+                    title = { Text("Hooked") },
+                )
             }
         ) { padding ->
             Column(
