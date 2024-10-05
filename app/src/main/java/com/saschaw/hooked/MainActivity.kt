@@ -1,6 +1,5 @@
 package com.saschaw.hooked
 
-import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,19 +9,19 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.saschaw.hooked.core.designsystem.theme.HookedTheme
 import com.saschaw.hooked.ui.HookedApp
 import com.saschaw.hooked.ui.rememberHookedAppState
+import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
+import net.openid.appauth.AuthorizationResponse
 import net.openid.appauth.AuthorizationService
 import net.openid.appauth.AuthorizationServiceConfiguration
 import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
-import net.openid.appauth.RedirectUriReceiverActivity
 import net.openid.appauth.ResponseTypeValues
+import net.openid.appauth.TokenRequest
 
 
 class MainActivity : ComponentActivity() {
@@ -30,36 +29,46 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
 
-        val serviceConfiguration = AuthorizationServiceConfiguration(
-                Uri.parse(AuthConfig.AUTH_URI),
-                Uri.parse(AuthConfig.TOKEN_URI)
-            )
-
-        fun getAuthRequest(): AuthorizationRequest {
-            return AuthorizationRequest.Builder(
-                serviceConfiguration,
-                AuthConfig.CLIENT_ID,
-                AuthConfig.RESPONSE_TYPE,
-                Uri.parse(AuthConfig.CALLBACK_URL)
-            )
-                .setScope(AuthConfig.SCOPE)
-                .build()
-        }
-
-        val customTabsIntent = CustomTabsIntent.Builder().build()
-
-        val authService = AuthorizationService(application)
-
-        val openAuthPageIntent = authService.getAuthorizationRequestIntent(
-            getAuthRequest(),
-            customTabsIntent
+        val authServiceConfig = AuthorizationServiceConfiguration(
+            Uri.parse(AuthConfig.AUTH_URI),
+            Uri.parse(AuthConfig.TOKEN_URI)
         )
 
-        val getAuthResponse = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val dataIntent = result.data
-            dataIntent?.let {
-                val thing = it
-                // Do stuff
+        val authService = AuthorizationService(application)
+        val clientAuthentication: ClientAuthentication = ClientSecretBasic(AuthConfig.CLIENT_SECRET)
+
+        val authRequest = AuthorizationRequest.Builder(
+            authServiceConfig,
+            AuthConfig.CLIENT_ID,
+            AuthConfig.RESPONSE_TYPE,
+            Uri.parse(AuthConfig.CALLBACK_URL)
+        )
+            .setScope(AuthConfig.SCOPE)
+            .build()
+
+        val openAuthPageIntent = authService.getAuthorizationRequestIntent(
+            authRequest,
+            CustomTabsIntent.Builder().build()
+        )
+
+        val getAuthResponse = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            result.data?.let { data ->
+                val exception = AuthorizationException.fromIntent(data)?.let {
+                    // Handle exception
+                }
+                AuthorizationResponse.fromIntent(data)
+                    ?.createTokenExchangeRequest()
+                    ?.let {
+                        performTokenRequest(
+                            authService,
+                            clientAuthentication,
+                            it,
+                            onComplete = {},
+                            onError = {}
+                        )
+                    }
             }
         }
 
@@ -77,11 +86,36 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+fun performTokenRequest(
+    authService: AuthorizationService,
+    clientAuthentication: ClientAuthentication,
+    tokenRequest: TokenRequest,
+    onComplete: () -> Unit,
+    onError: () -> Unit
+) {
+    authService.performTokenRequest(tokenRequest, clientAuthentication) { response, ex ->
+        when {
+            response != null -> {
+                val accessToken = response.accessToken.orEmpty()
+                val refreshToken = response.refreshToken
+                onComplete()
+            }
+            else -> onError()
+        }
+    }
+}
+
+data class ResponseThing(
+    val code: String,
+    val scope: String,
+    val state: String
+)
+
 object AuthConfig {
     const val AUTH_URI = "https://www.ravelry.com/oauth2/auth"
     const val TOKEN_URI = "https://www.ravelry.com/oauth2/token"
     const val RESPONSE_TYPE = ResponseTypeValues.CODE
-    const val SCOPE = "profile-only"
+    const val SCOPE = "offline"
     const val CLIENT_ID = "046df0194f6c9a9d82c4762407f57f5a"
     const val CLIENT_SECRET = "QFSZe8HF_YW5Bn7yNnrXWf9p//DR_6AvMW_5S8k9"
     const val CALLBACK_URL = "com.saschaw.hooked:/oauth2redirect/ravelry"
