@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.saschaw.hooked.core.designsystem.HookedIcons
 import com.saschaw.hooked.core.designsystem.theme.HookedTheme
+import com.saschaw.hooked.core.designsystem.HookedIcons
 
 @Suppress("ktlint:standard:function-naming")
 /**

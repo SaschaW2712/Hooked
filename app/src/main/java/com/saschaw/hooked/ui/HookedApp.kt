@@ -1,6 +1,5 @@
 package com.saschaw.hooked.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -33,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
@@ -51,11 +49,8 @@ fun HookedApp(
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
 
-    val color = MaterialTheme.colorScheme.background
-    val tonalElevation = LocalAbsoluteTonalElevation.current
     Surface(
-        color = if (color == Color.Unspecified) Color.Transparent else color,
-        tonalElevation = if (tonalElevation == Dp.Unspecified) 0.dp else tonalElevation,
+        color = Color.Transparent,
         modifier = modifier.fillMaxSize(),
     ) {
         CompositionLocalProvider(LocalAbsoluteTonalElevation provides 0.dp) {
@@ -86,9 +81,8 @@ internal fun HookedApp(
     HookedNavigationSuiteScaffold(
         navigationSuiteItems = {
             appState.topLevelDestinations.forEach { destination ->
-                val selected =
-                    currentDestination
-                        .isRouteInHierarchy(destination.route)
+                val selected = currentDestination.isRouteInHierarchy(destination.route)
+
                 item(
                     selected = selected,
                     onClick = { appState.navigateToTopLevelDestination(destination) },
@@ -105,13 +99,14 @@ internal fun HookedApp(
                         )
                     },
                     label = { Text(stringResource(destination.iconTextId)) },
-                    modifier =
-                    Modifier,
                 )
             }
         },
         windowAdaptiveInfo = windowAdaptiveInfo,
     ) {
+        // Show the top app bar on top level destinations.
+        val destination = appState.currentTopLevelDestination
+
         Scaffold(
             modifier =
                 modifier.semantics {
@@ -121,6 +116,13 @@ internal fun HookedApp(
             contentColor = MaterialTheme.colorScheme.onBackground,
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             snackbarHost = { SnackbarHost(snackbarHostState) },
+            topBar = {
+                if (destination != null) {
+                    TopAppBar(
+                        title = { Text("Hooked") },
+                    )
+                }
+            }
         ) { padding ->
             Column(
                 Modifier
@@ -133,44 +135,16 @@ internal fun HookedApp(
                         ),
                     ),
             ) {
-                // Show the top app bar on top level destinations.
-                val destination = appState.currentTopLevelDestination
-                var shouldShowTopAppBar = false
-
-                if (destination != null) {
-                    shouldShowTopAppBar = true
-
-                    TopAppBar(
-                        title = { Text("Hooked") },
-                    )
-                }
-
-                Box(
-                    // TODO: Still need?
-                    // Workaround for https://issuetracker.google.com/338478720
-                    modifier =
-                        Modifier.consumeWindowInsets(
-                            if (shouldShowTopAppBar) {
-                                WindowInsets.safeDrawing.only(WindowInsetsSides.Top)
-                            } else {
-                                WindowInsets(0, 0, 0, 0)
-                            },
-                        ),
-                ) {
-                    HookedNavHost(
-                        appState = appState,
-                        onShowSnackbar = { message, action ->
-                            snackbarHostState.showSnackbar(
-                                message = message,
-                                actionLabel = action,
-                                duration = Short,
-                            ) == ActionPerformed
-                        },
-                    )
-                }
-
-                // TODO: We may want to add padding or spacer when the snackbar is shown so that
-                //  content doesn't display behind it.
+                HookedNavHost(
+                    appState = appState,
+                    onShowSnackbar = { message, action ->
+                        snackbarHostState.showSnackbar(
+                            message = message,
+                            actionLabel = action,
+                            duration = Short,
+                        ) == ActionPerformed
+                    },
+                )
             }
         }
     }

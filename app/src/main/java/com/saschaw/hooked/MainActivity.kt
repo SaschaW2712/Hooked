@@ -16,9 +16,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         installSplashScreen()
 
-        enableEdgeToEdge()
 
         setContent {
+            enableEdgeToEdge()
+
             val appState = rememberHookedAppState()
 
             HookedTheme {

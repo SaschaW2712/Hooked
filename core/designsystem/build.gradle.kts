@@ -20,6 +20,7 @@ dependencies {
     implementation(libs.androidx.material3.android)
     implementation(libs.androidx.material3.adaptive.navigation.suite.android)
     implementation(libs.androidx.ui.tooling.preview.android)
+    api(libs.androidx.compose.ui.googleFonts)
 
     testImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.junit)
