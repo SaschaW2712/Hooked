@@ -21,7 +21,11 @@ daggerHilt = '2.52'
 ksp =  '2.0.20-1.0.25'
 splashScreen = '1.0.1'
 googleFonts = "1.7.3"
-uiTooling = "1.7.3"
+retrofit = "2.11.0"
+transportRuntime = "3.3.0"
+javaxInject = "1"
+jwtDecode = "2.0.0"
+openIdAppAuth = "0.9.1"
 
 
 
@@ -49,7 +53,13 @@ dagger-hilt-android = { module =  "com.google.dagger:hilt-android", version.ref 
 dagger-hilt-compiler = { module =  "com.google.dagger:hilt-compiler", version.ref = "daggerHilt" }
 androidx-core-splashScreen = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen"}
 androidx-compose-ui-googleFonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "googleFonts" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose-tooling" }
+retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-kotlin-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
+transport-runtime = { group = "com.google.android.datatransport", name = "transport-runtime", version.ref = "transportRuntime" }
+javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
+auth0-android-jwtDecode = { module = "com.auth0.android:jwtdecode" , version.ref = "jwtDecode" }
+openId-appAuth = { module = "net.openid:appauth", version.ref = "openIdAppAuth" }
 
 
 [plugins]

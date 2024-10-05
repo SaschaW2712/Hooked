@@ -19,8 +19,9 @@ android {
         versionName = "0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
+        manifestPlaceholders["appAuthRedirectScheme"] = "com.saschaw.hooked"
 
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -56,6 +57,8 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:designsystem"))
     ksp(libs.dagger.hilt.compiler)
+    implementation(libs.auth0.android.jwtDecode)
+    implementation(libs.openId.appAuth)
 
     implementation(project(":feature:browse"))
     implementation(project(":feature:favorites"))
