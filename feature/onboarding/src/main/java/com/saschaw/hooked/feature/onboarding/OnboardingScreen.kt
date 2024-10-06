@@ -67,9 +67,6 @@ fun OnboardingScreen(
                 .fillMaxSize()
                 .padding(padding)
                 .consumeWindowInsets(padding)
-                .windowInsetsPadding(
-                    WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)
-                )
                 .padding(horizontal = 36.dp, vertical = 36.dp)
                 .verticalScroll(state),
             verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -77,8 +74,7 @@ fun OnboardingScreen(
         ) {
             TitleWithLogo(Modifier.padding(vertical = 8.dp))
 
-            HighlightedText(ColorStyle.Primary,
-                stringResource(R.string.update_your_current_projects))
+            HighlightedText(ColorStyle.Primary, stringResource(R.string.update_your_current_projects))
             HighlightedText(ColorStyle.Secondary, stringResource(R.string.find_new_inspiration))
             HighlightedText(ColorStyle.Tertiary, stringResource(R.string.connect_with_the_community))
 
