@@ -32,17 +32,5 @@ fun HookedNavHost(
         browseScreen()
 
         favoritesScreen()
-
-        // More routes ...
-//        bookmarksScreen(
-//            onTopicClick = navController::navigateToInterests,
-//            onShowSnackbar = onShowSnackbar,
-//        )
-//        searchScreen(
-//            onBackClick = navController::popBackStack,
-//            onInterestsClick = { appState.navigateToTopLevelDestination(INTERESTS) },
-//            onTopicClick = navController::navigateToInterests,
-//        )
-//        interestsListDetailScreen()
     }
 }

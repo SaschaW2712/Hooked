@@ -1,6 +1,8 @@
 package com.saschaw.hooked.core.authentication.di
 
 import android.content.Context
+import android.net.Uri
+import com.saschaw.hooked.core.authentication.AuthConfig
 import com.saschaw.hooked.core.authentication.AuthenticationManager
 import com.saschaw.hooked.core.authentication.RavelryAuthenticationManager
 import dagger.Binds
@@ -9,7 +11,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationService
+import net.openid.appauth.AuthorizationServiceConfiguration
 import javax.inject.Singleton
 
 @Module
@@ -23,10 +27,23 @@ abstract class AuthenticationModule {
         ): AuthorizationService {
             return AuthorizationService(context)
         }
+
+        @Provides
+        @Singleton
+        fun provideAuthState(
+        ): AuthState {
+            return AuthState(
+                AuthorizationServiceConfiguration(
+                    Uri.parse(AuthConfig.AUTH_URI),
+                    Uri.parse(AuthConfig.TOKEN_URI)
+                )
+            )
+        }
     }
 
     @Binds
     internal abstract fun bindAuthenticationManager(
         authenticationManager: RavelryAuthenticationManager
     ): AuthenticationManager
+
 }

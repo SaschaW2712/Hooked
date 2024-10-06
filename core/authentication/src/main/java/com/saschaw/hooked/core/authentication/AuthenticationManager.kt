@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.result.ActivityResult
 import androidx.browser.customtabs.CustomTabsIntent
+import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
 import net.openid.appauth.AuthorizationResponse
@@ -18,6 +19,7 @@ import javax.inject.Inject
 interface AuthenticationManager {
     fun getAuthorizationIntent(additionalScopes: List<RavelryAuthenticationScope> = emptyList()): Intent
     fun onAuthorizationResult(result: ActivityResult)
+    fun doAuthenticated(function: (String?, String?) -> Unit)
 }
 
 enum class RavelryAuthenticationScope(name: String) {
@@ -33,12 +35,11 @@ enum class RavelryAuthenticationScope(name: String) {
 }
 
 class RavelryAuthenticationManager @Inject constructor(): AuthenticationManager {
-    @Inject lateinit var authService: AuthorizationService
+    @Inject
+    lateinit var authService: AuthorizationService
 
-    private val authServiceConfig = AuthorizationServiceConfiguration(
-        Uri.parse(AuthConfig.AUTH_URI),
-        Uri.parse(AuthConfig.TOKEN_URI)
-    )
+    @Inject
+    lateinit var authState: AuthState
 
     private val clientId = AuthConfig.CLIENT_ID
     private val clientSecret = AuthConfig.CLIENT_SECRET
@@ -55,33 +56,35 @@ class RavelryAuthenticationManager @Inject constructor(): AuthenticationManager 
 
     override fun onAuthorizationResult(result: ActivityResult) {
         result.data?.let { data ->
-            val exception = AuthorizationException.fromIntent(data)?.let {
+            val exception = AuthorizationException.fromIntent(data)
+            val response = AuthorizationResponse.fromIntent(data)
+
+            authState.update(response, exception)
+
+            exception?.let {
                 // Handle exception
+                throw exception
             }
 
-            AuthorizationResponse.fromIntent(data)
-                ?.createTokenExchangeRequest()
-                ?.let {
-                    val clientAuthentication: ClientAuthentication = ClientSecretBasic(clientSecret)
+            response?.createTokenExchangeRequest()?.let {
+                val clientAuthentication: ClientAuthentication = ClientSecretBasic(clientSecret)
 
-                    performTokenRequest(
-                        authService,
-                        clientAuthentication,
-                        it,
-                        onComplete = {
-                            // Do stuff
-                        },
-                        onError = {
-                            // Do stuff
-                        }
-                    )
-                }
+                performTokenRequest(
+                    authService,
+                    clientAuthentication,
+                    it
+                )
+            }
         }
     }
 
     private fun buildAuthRequest(additionalScopes: List<RavelryAuthenticationScope>?): AuthorizationRequest {
         val authRequestBuilder = AuthorizationRequest.Builder(
-            authServiceConfig,
+            authState.authorizationServiceConfiguration
+                ?: AuthorizationServiceConfiguration(
+                    Uri.parse(AuthConfig.AUTH_URI),
+                    Uri.parse(AuthConfig.TOKEN_URI),
+                ),
             clientId,
             ResponseTypeValues.CODE,
             Uri.parse(appCallbackUri)
@@ -98,19 +101,22 @@ class RavelryAuthenticationManager @Inject constructor(): AuthenticationManager 
         authService: AuthorizationService,
         clientAuthentication: ClientAuthentication,
         tokenRequest: TokenRequest,
-        onComplete: () -> Unit,
-        onError: () -> Unit
     ) {
-        authService.performTokenRequest(tokenRequest, clientAuthentication) { response, ex ->
-            when {
-                response != null -> {
-                    val accessToken = response.accessToken.orEmpty()
-                    val refreshToken = response.refreshToken
-                    onComplete()
-                }
-                else -> onError()
-            }
+        authService.performTokenRequest(tokenRequest, clientAuthentication) { response, exception ->
+            authState.update(response, exception)
         }
+    }
+
+    override fun doAuthenticated(function: (String?, String?) -> Unit) {
+        authState.performActionWithFreshTokens(authService) { accessToken, idToken, ex ->
+            ex?.let {
+                // Handle error
+                throw ex
+            }
+
+            function(accessToken, idToken)
+        }
+
     }
 }
 
