@@ -40,6 +40,7 @@ import com.saschaw.hooked.core.designsystem.theme.HookedTheme
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun OnboardingScreen(
+    modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
     viewModel: OnboardingScreenViewModel = hiltViewModel(),
     onFinishOnboarding: () -> Unit,
@@ -54,6 +55,7 @@ fun OnboardingScreen(
         }
 
     Scaffold(
+        modifier = modifier,
         containerColor = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.onBackground,
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -115,7 +117,7 @@ fun OnboardingScreen(
 private fun BrowseScreenPreview() {
     HookedTheme {
         Surface {
-            OnboardingScreen(remember { SnackbarHostState() }) {}
+            OnboardingScreen(snackbarHostState = remember { SnackbarHostState() }) {}
         }
     }
 }

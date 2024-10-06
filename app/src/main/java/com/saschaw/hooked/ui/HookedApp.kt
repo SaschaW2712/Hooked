@@ -1,5 +1,6 @@
 package com.saschaw.hooked.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -82,11 +83,13 @@ internal fun HookedApp(
 
     val hasSeenOnboarding = remember { mutableStateOf(false) }
 
-    if (!hasSeenOnboarding.value) {
-        OnboardingScreen(snackbarHostState) {
+    AnimatedVisibility(!hasSeenOnboarding.value) {
+        OnboardingScreen(modifier, snackbarHostState) {
             hasSeenOnboarding.value = true
         }
-    } else {
+    }
+
+    AnimatedVisibility(hasSeenOnboarding.value) {
         HookedNavigationSuiteScaffold(
             navigationSuiteItems = {
                 appState.topLevelDestinations.forEach { destination ->
@@ -113,9 +116,6 @@ internal fun HookedApp(
             },
             windowAdaptiveInfo = windowAdaptiveInfo,
         ) {
-            // Show the top app bar on top level destinations.
-            val destination = appState.currentTopLevelDestination
-
             Scaffold(
                 modifier = modifier,
                 containerColor = Color.Transparent,
