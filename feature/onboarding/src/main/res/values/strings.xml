@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_your_current_projects">Update your current projects</string>
-    <string name="find_new_inspiration">Find new inspiration</string>
-    <string name="connect_with_the_community">Connect with the community</string>
+    <string name="update_your_current_projects">Find new inspiration</string>
+    <string name="find_new_inspiration">Search and filter patterns</string>
+    <string name="connect_with_the_community">Save your finds for later</string>
     <string name="onboarding_cta_body">Loop us in! Connect to Ravelry to get started.</string>
     <string name="onboarding_cta_button_label">Link my account</string>
     <string name="privacy_note">Linking to Ravelry does not give Hooked access to any of your private information, like passwords or payment details.</string>
