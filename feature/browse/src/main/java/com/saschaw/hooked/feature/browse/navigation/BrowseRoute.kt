@@ -1,5 +1,6 @@
 package com.saschaw.hooked.feature.browse.navigation
 
+import androidx.compose.material3.SnackbarHostState
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions

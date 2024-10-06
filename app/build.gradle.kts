@@ -59,6 +59,7 @@ dependencies {
     implementation(project(":core:common"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:authentication"))
+    implementation(project(":feature:onboarding"))
     ksp(libs.dagger.hilt.compiler)
     implementation(libs.auth0.android.jwtDecode)
     implementation(libs.openId.appAuth)

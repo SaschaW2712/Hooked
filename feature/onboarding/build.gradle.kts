@@ -3,10 +3,12 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.dagger.hilt.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.saschaw.hooked.feature.favorites"
+    namespace = "com.saschaw.hooked.feature.onboarding"
     compileSdk = 34
 }
 
@@ -18,7 +20,9 @@ dependencies {
     implementation(libs.androidx.navigationCompose)
     implementation(libs.androidx.compose.m3)
     implementation(project(":core:designsystem"))
-    testImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.test.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+    implementation(project(":core:authentication"))
+    implementation(libs.dagger.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.ui.tooling.preview.android)
+    ksp(libs.dagger.hilt.compiler)
 }

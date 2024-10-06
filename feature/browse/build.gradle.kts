@@ -23,6 +23,7 @@ dependencies {
     implementation(project(":core:authentication"))
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.ui.tooling.preview.android)
     ksp(libs.dagger.hilt.compiler)
 
     testImplementation(libs.androidx.junit)
