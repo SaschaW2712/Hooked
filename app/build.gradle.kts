@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.secrets)
 }
 
 android {
@@ -19,8 +20,9 @@ android {
         versionName = "0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
+        manifestPlaceholders["appAuthRedirectScheme"] = "com.saschaw.hooked"
 
+    }
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -39,6 +41,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -49,13 +52,16 @@ dependencies {
     implementation(libs.androidx.navigationCompose)
     implementation(libs.androidx.compose.m3)
     implementation(libs.androidx.compose.tooling)
-    implementation(libs.material)
+    implementation(libs.google.material)
     implementation(libs.kotlinx.datetime)
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.material3.adaptive.navigation.suite.android)
     implementation(project(":core:common"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:authentication"))
     ksp(libs.dagger.hilt.compiler)
+    implementation(libs.auth0.android.jwtDecode)
+    implementation(libs.openId.appAuth)
 
     implementation(project(":feature:browse"))
     implementation(project(":feature:favorites"))

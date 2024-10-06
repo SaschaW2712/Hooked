@@ -10,12 +10,13 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.saschaw.hooked.core.designsystem.theme.HookedTheme
 import com.saschaw.hooked.ui.HookedApp
 import com.saschaw.hooked.ui.rememberHookedAppState
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
-
 
         setContent {
             enableEdgeToEdge()
@@ -28,6 +29,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 
 @Suppress("ktlint:standard:function-naming")
 @Preview

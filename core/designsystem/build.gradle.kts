@@ -13,7 +13,7 @@ android {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    implementation(libs.google.material)
 
     api(libs.androidx.compose.material.iconsExtended)
     implementation(libs.androidx.material.icons.core.android)

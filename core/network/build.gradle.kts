@@ -4,24 +4,22 @@ plugins {
 }
 
 android {
-    namespace = "com.saschaw.hooked.core.common"
+    namespace = "com.saschaw.hooked.core.network"
     compileSdk = 34
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
-        }
-    }
 }
 
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.google.material)
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.kotlin.serialization)
+    implementation(libs.transport.runtime)
+    implementation(libs.javax.inject)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.auth0.android.jwtDecode)
+    implementation(libs.openId.appAuth)
+
     testImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.espresso.core)

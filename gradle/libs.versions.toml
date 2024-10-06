@@ -21,7 +21,13 @@ daggerHilt = '2.52'
 ksp =  '2.0.20-1.0.25'
 splashScreen = '1.0.1'
 googleFonts = "1.7.3"
-uiTooling = "1.7.3"
+retrofit = "2.11.0"
+transportRuntime = "3.3.0"
+javaxInject = "1"
+jwtDecode = "2.0.0"
+openIdAppAuth = "0.9.1"
+googleSecrets = "2.0.1"
+hiltNavigationCompose = "1.2.0"
 
 
 
@@ -34,7 +40,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-compose-m3 = { module = "androidx.compose.material3:material3", version.ref = "compose-material3"}
 androidx-compose-tooling = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose-tooling"}
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "compose-material3" }
-material = { module = "com.google.android.material:material", version.ref="material" }
+google-material = { module = "com.google.android.material:material", version.ref="material" }
 androidx-compose-material-iconsExtended = { module = "androidx.compose.material:material-icons-extended-android", version.ref = "material-icons" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 androidx-navigationCompose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidx-navigationCompose" }
@@ -49,8 +55,15 @@ dagger-hilt-android = { module =  "com.google.dagger:hilt-android", version.ref 
 dagger-hilt-compiler = { module =  "com.google.dagger:hilt-compiler", version.ref = "daggerHilt" }
 androidx-core-splashScreen = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen"}
 androidx-compose-ui-googleFonts = { module = "androidx.compose.ui:ui-text-google-fonts", version.ref = "googleFonts" }
-androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
-
+androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "compose-tooling" }
+retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-kotlin-serialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofit" }
+transport-runtime = { group = "com.google.android.datatransport", name = "transport-runtime", version.ref = "transportRuntime" }
+javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
+auth0-android-jwtDecode = { module = "com.auth0.android:jwtdecode" , version.ref = "jwtDecode" }
+openId-appAuth = { module = "net.openid:appauth", version.ref = "openIdAppAuth" }
+google-secrets = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "googleSecrets"}
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -60,6 +73,7 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 dagger-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "daggerHilt" }
 ksp = { id = 'com.google.devtools.ksp', version.ref = "ksp" }
+google-secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "googleSecrets" }
 
 
 
