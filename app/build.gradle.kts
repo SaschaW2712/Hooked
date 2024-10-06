@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.androidx.material3.adaptive.navigation.suite.android)
     implementation(project(":core:common"))
     implementation(project(":core:designsystem"))
+    implementation(project(":core:authentication"))
     ksp(libs.dagger.hilt.compiler)
     implementation(libs.auth0.android.jwtDecode)
     implementation(libs.openId.appAuth)

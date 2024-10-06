@@ -1,6 +1,8 @@
 package com.saschaw.hooked.feature.browse
 
 import HookedButton
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,11 +19,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.saschaw.hooked.core.authentication.AuthenticationManager
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun BrowseScreen() {
+fun BrowseScreen(
+    viewModel: BrowseScreenViewModel = hiltViewModel()
+) {
     val state = rememberScrollState()
+    val authenticationManager = viewModel.authenticationManager
+
+    val authLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+        authenticationManager.onAuthorizationResult(it)
+    }
+
     Column(
         Modifier.padding(horizontal = 8.dp).verticalScroll(state),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -48,7 +60,9 @@ fun BrowseScreen() {
 
         HookedButton(onClick = {}, text = { Text("This is a button") })
         HookedButton(
-            onClick = {},
+            onClick = {
+                authLauncher.launch(authenticationManager.getAuthorizationIntent())
+                      },
             style = HookedButtonStyle.Secondary,
             text = { Text("Secondary button") })
 

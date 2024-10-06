@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".HookedApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -29,7 +30,8 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="{appAuthRedirectScheme}" android:host="oauth2redirect/ravelry"/>
+                <data android:scheme="{appAuthRedirectScheme}" android:host="oauth2redirect/ravelry"
+                    tools:ignore="AppLinkUrlError" />
             </intent-filter>
         </activity>
     </application>

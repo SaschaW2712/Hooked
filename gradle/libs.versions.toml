@@ -27,6 +27,7 @@ javaxInject = "1"
 jwtDecode = "2.0.0"
 openIdAppAuth = "0.9.1"
 googleSecrets = "2.0.1"
+hiltNavigationCompose = "1.2.0"
 
 
 
@@ -62,7 +63,7 @@ javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInjec
 auth0-android-jwtDecode = { module = "com.auth0.android:jwtdecode" , version.ref = "jwtDecode" }
 openId-appAuth = { module = "net.openid:appauth", version.ref = "openIdAppAuth" }
 google-secrets = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "googleSecrets"}
-
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose"}
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
