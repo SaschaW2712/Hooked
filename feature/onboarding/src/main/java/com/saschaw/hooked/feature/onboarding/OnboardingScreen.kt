@@ -29,12 +29,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.saschaw.hooked.core.designsystem.components.ColorStyle
 import com.saschaw.hooked.core.designsystem.components.HighlightedText
+import com.saschaw.hooked.core.designsystem.components.TitleWithLogo
 import com.saschaw.hooked.core.designsystem.theme.HookedTheme
 
 @Suppress("ktlint:standard:function-naming")
@@ -73,18 +75,20 @@ fun OnboardingScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Hooked", style = MaterialTheme.typography.headlineLarge)
+            TitleWithLogo(Modifier.padding(vertical = 8.dp))
 
-            HighlightedText(ColorStyle.Primary, "Update your current projects")
-            HighlightedText(ColorStyle.Secondary, "Find new inspiration")
-            HighlightedText(ColorStyle.Tertiary, "Connect with the community")
+            HighlightedText(ColorStyle.Primary,
+                stringResource(R.string.update_your_current_projects))
+            HighlightedText(ColorStyle.Secondary, stringResource(R.string.find_new_inspiration))
+            HighlightedText(ColorStyle.Tertiary, stringResource(R.string.connect_with_the_community))
 
             Spacer(Modifier.height(16.dp))
 
             Text(
-                "But first, we need you to loop us in! Connect to Ravelry to get started.",
+                text = stringResource(R.string.onboarding_cta_body),
                 style = MaterialTheme.typography.bodyLarge,
-                textAlign = Center
+                textAlign = Center,
+                modifier = Modifier.padding(horizontal = 40.dp)
             )
 
             HookedButton(
@@ -95,7 +99,7 @@ fun OnboardingScreen(
                 style = HookedButtonStyle.Primary,
                 text = {
                     Text(
-                        "Link my account",
+                        text = stringResource(R.string.onboarding_cta_button_label),
                         style = MaterialTheme.typography.bodyLarge,
                         modifier = Modifier.padding(8.dp),
                     )
@@ -103,7 +107,7 @@ fun OnboardingScreen(
             )
 
             Text(
-                "Linking to Ravelry does not give Hooked access to any of your private information, like passwords or payment details.",
+                text = stringResource(R.string.privacy_note),
                 style = MaterialTheme.typography.bodySmall,
                 textAlign = Center,
                 color = MaterialTheme.colorScheme.onSurface
