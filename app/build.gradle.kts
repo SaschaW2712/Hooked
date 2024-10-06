@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.dagger.hilt.android)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.google.secrets)
 }
 
 android {
@@ -40,6 +41,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
@@ -50,7 +52,7 @@ dependencies {
     implementation(libs.androidx.navigationCompose)
     implementation(libs.androidx.compose.m3)
     implementation(libs.androidx.compose.tooling)
-    implementation(libs.material)
+    implementation(libs.google.material)
     implementation(libs.kotlinx.datetime)
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.material3.adaptive.navigation.suite.android)

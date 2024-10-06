@@ -87,6 +87,15 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+object AuthConfig {
+    const val AUTH_URI = BuildConfig.AUTH_URI
+    const val TOKEN_URI = BuildConfig.TOKEN_URI
+    const val RESPONSE_TYPE = ResponseTypeValues.CODE
+    const val SCOPE = "offline"
+    const val CLIENT_ID = BuildConfig.CLIENT_ID
+    const val CLIENT_SECRET = BuildConfig.CLIENT_SECRET
+    const val CALLBACK_URL = BuildConfig.CALLBACK_URL
+}
 
 fun performTokenRequest(
     authService: AuthorizationService,
@@ -107,15 +116,7 @@ fun performTokenRequest(
     }
 }
 
-object AuthConfig {
-    const val AUTH_URI = "https://www.ravelry.com/oauth2/auth"
-    const val TOKEN_URI = "https://www.ravelry.com/oauth2/token"
-    const val RESPONSE_TYPE = ResponseTypeValues.CODE
-    const val SCOPE = "offline"
-    const val CLIENT_ID = "046df0194f6c9a9d82c4762407f57f5a"
-    const val CLIENT_SECRET = "QFSZe8HF_YW5Bn7yNnrXWf9p//DR_6AvMW_5S8k9"
-    const val CALLBACK_URL = "com.saschaw.hooked:/oauth2redirect/ravelry"
-}
+
 
 @Suppress("ktlint:standard:function-naming")
 @Preview

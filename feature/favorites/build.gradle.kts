@@ -13,7 +13,7 @@ android {
 dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    implementation(libs.google.material)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigationCompose)
     implementation(libs.androidx.compose.m3)
