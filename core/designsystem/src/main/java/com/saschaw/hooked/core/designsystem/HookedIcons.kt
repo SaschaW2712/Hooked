@@ -1,6 +1,7 @@
 package com.saschaw.hooked.core.designsystem
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.OpenInNew
 import androidx.compose.material.icons.outlined.Collections
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Collections
@@ -13,4 +14,5 @@ object HookedIcons {
     val Favorite = Icons.Rounded.Favorite
     val FavoriteOutlined = Icons.Rounded.FavoriteBorder
     val Add = Icons.Rounded.Add
+    val OpenInNew = Icons.AutoMirrored.Rounded.OpenInNew
 }

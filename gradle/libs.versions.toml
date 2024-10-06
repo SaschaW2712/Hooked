@@ -28,6 +28,7 @@ jwtDecode = "2.0.0"
 openIdAppAuth = "0.9.1"
 googleSecrets = "2.0.1"
 hiltNavigationCompose = "1.2.0"
+foundationAndroid = "1.7.3"
 
 
 
@@ -64,6 +65,7 @@ auth0-android-jwtDecode = { module = "com.auth0.android:jwtdecode" , version.ref
 openId-appAuth = { module = "net.openid:appauth", version.ref = "openIdAppAuth" }
 google-secrets = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "googleSecrets"}
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose"}
+androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
