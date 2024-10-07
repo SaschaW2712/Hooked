@@ -2,8 +2,13 @@ package com.saschaw.hooked.core.authentication
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.browser.customtabs.CustomTabsIntent
+import com.saschaw.hooked.core.datastore.HookedPreferencesDataSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
@@ -14,6 +19,7 @@ import net.openid.appauth.ClientAuthentication
 import net.openid.appauth.ClientSecretBasic
 import net.openid.appauth.ResponseTypeValues
 import net.openid.appauth.TokenRequest
+import net.openid.appauth.TokenResponse
 import javax.inject.Inject
 
 interface AuthenticationManager {
@@ -41,6 +47,9 @@ class RavelryAuthenticationManager @Inject constructor(): AuthenticationManager 
     @Inject
     lateinit var authState: AuthState
 
+    @Inject
+    lateinit var preferences: HookedPreferencesDataSource
+
     private val clientId = AuthConfig.CLIENT_ID
     private val clientSecret = AuthConfig.CLIENT_SECRET
     private val appCallbackUri = AuthConfig.CALLBACK_URL
@@ -59,7 +68,9 @@ class RavelryAuthenticationManager @Inject constructor(): AuthenticationManager 
             val exception = AuthorizationException.fromIntent(data)
             val response = AuthorizationResponse.fromIntent(data)
 
-            authState.update(response, exception)
+            CoroutineScope(Dispatchers.IO).launch {
+                updateAuthState(response, exception)
+            }
 
             exception?.let {
                 // Handle exception
@@ -103,7 +114,9 @@ class RavelryAuthenticationManager @Inject constructor(): AuthenticationManager 
         tokenRequest: TokenRequest,
     ) {
         authService.performTokenRequest(tokenRequest, clientAuthentication) { response, exception ->
-            authState.update(response, exception)
+            CoroutineScope(Dispatchers.IO).launch {
+                updateAuthState(response, exception)
+            }
         }
     }
 
@@ -116,7 +129,16 @@ class RavelryAuthenticationManager @Inject constructor(): AuthenticationManager 
 
             function(accessToken, idToken)
         }
+    }
 
+    private suspend fun updateAuthState(authResponse: AuthorizationResponse?, authException: AuthorizationException?) {
+        authState.update(authResponse, authException)
+        preferences.updateAuthState(authState)
+    }
+
+    private suspend fun updateAuthState(tokenResponse: TokenResponse?, authException: AuthorizationException?) {
+        authState.update(tokenResponse, authException)
+        preferences.updateAuthState(authState)
     }
 }
 

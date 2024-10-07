@@ -22,6 +22,7 @@ dependencies {
     implementation(libs.google.material)
     implementation(libs.openId.appAuth)
     implementation(libs.dagger.hilt.android)
+    implementation(project(":core:datastore"))
     ksp(libs.dagger.hilt.compiler)
 
     testImplementation(libs.androidx.junit)
