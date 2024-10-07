@@ -35,7 +35,6 @@ class HookedPreferencesDataSource @Inject constructor(
     suspend fun updateShouldShowOnboarding(shouldShowOnboarding: Boolean) =
         updateUserData(shouldShowOnboarding = shouldShowOnboarding)
 
-
     private fun getUserData() = preferences.data.map { preferences ->
         preferences[userDataKey]?.let {
             try {
@@ -51,16 +50,16 @@ class HookedPreferencesDataSource @Inject constructor(
         authState: AuthState? = null,
         shouldShowOnboarding: Boolean? = null
     ) {
-        getUserData().collectLatest {
-            it?.let {
-                val newData = it.copy(
+        preferences.edit { mutablePrefs ->
+            val userData = mutablePrefs[userDataKey]?.let { Json.decodeFromString<UserData>(it) }
+
+            userData?.let {
+                val newData = userData.copy(
                     authState = authState ?: it.authState,
                     shouldShowOnboarding = shouldShowOnboarding ?: it.shouldShowOnboarding
                 )
 
-                preferences.edit { mutablePreferences ->
-                    mutablePreferences[userDataKey] = Json.encodeToString(newData)
-                }
+                mutablePrefs[userDataKey] = Json.encodeToString(newData)
             }
         }
     }
