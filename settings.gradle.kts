@@ -20,13 +20,15 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Hooked"
+
 include(":app")
 include(":core")
-include(":core:common")
-include(":core:model")
-include(":feature:browse")
-include(":core:designsystem")
-include(":feature:favorites")
-include(":core:network")
 include(":core:authentication")
+include(":core:common")
+include(":core:datastore")
+include(":core:designsystem")
+include(":core:model")
+include(":core:network")
+include(":feature:browse")
+include(":feature:favorites")
 include(":feature:onboarding")
