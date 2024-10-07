@@ -26,21 +26,21 @@ import androidx.compose.material3.adaptive.WindowAdaptiveInfo
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.saschaw.hooked.core.designsystem.navigation.HookedNavigationSuiteScaffold
 import com.saschaw.hooked.feature.onboarding.OnboardingScreen
 import com.saschaw.hooked.navigation.HookedNavHost
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlin.reflect.KClass
 
 @Suppress("ktlint:standard:function-naming")
@@ -71,7 +71,6 @@ fun HookedApp(
 @Composable
 @OptIn(
     ExperimentalMaterial3Api::class,
-    ExperimentalComposeUiApi::class,
 )
 internal fun HookedApp(
     appState: HookedAppState,
@@ -81,15 +80,17 @@ internal fun HookedApp(
 ) {
     val currentDestination = appState.currentDestination
 
-    val hasSeenOnboarding = remember { mutableStateOf(false) }
+    val onboardingState = appState.getOnboardingState().collectAsStateWithLifecycle(OnboardingState.ShowOnboarding())
 
-    AnimatedVisibility(!hasSeenOnboarding.value) {
+    AnimatedVisibility(onboardingState.value != OnboardingState.HideOnboarding) {
         OnboardingScreen(modifier, snackbarHostState) {
-            hasSeenOnboarding.value = true
+            CoroutineScope(Dispatchers.IO).launch {
+                appState.onboardingDismissed()
+            }
         }
     }
 
-    AnimatedVisibility(hasSeenOnboarding.value) {
+    AnimatedVisibility(onboardingState.value == OnboardingState.HideOnboarding) {
         HookedNavigationSuiteScaffold(
             navigationSuiteItems = {
                 appState.topLevelDestinations.forEach { destination ->

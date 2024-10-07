@@ -30,7 +30,7 @@ fun BrowseScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("browseee")
+        Text("Authenticated & seen onboarding!")
     }
 }
 

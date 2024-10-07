@@ -1,22 +1,18 @@
 package com.saschaw.hooked.core.datastore.di
 
-import android.content.Context
+
 import com.saschaw.hooked.core.datastore.HookedPreferencesDataSource
+import com.saschaw.hooked.core.datastore.PreferencesDataSource
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DataStoreModule {
-    @Provides
-    @Singleton
-    fun provideDataStore(
-        @ApplicationContext context: Context
-    ): HookedPreferencesDataSource {
-        return HookedPreferencesDataSource(context)
-    }
+abstract class DataStoreModule {
+    @Binds
+    internal abstract fun bindsDataStore(
+        dataStore: HookedPreferencesDataSource
+    ): PreferencesDataSource
 }
