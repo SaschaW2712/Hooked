@@ -2,7 +2,6 @@ package com.saschaw.hooked.core.authentication
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.activity.result.ActivityResult
 import androidx.browser.customtabs.CustomTabsIntent
 import com.saschaw.hooked.core.datastore.HookedPreferencesDataSource

@@ -7,38 +7,72 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.saschaw.hooked.core.model.UserData
+import com.saschaw.hooked.core.model.HookedUserData
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.openid.appauth.AuthState
 import javax.inject.Inject
 
-
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_data")
 
+interface PreferencesDataSource {
+    suspend fun initUserData()
+
+    fun getAuthState(): Flow<AuthState?>
+    suspend fun updateAuthState(authState: AuthState)
+
+    fun getUserData(): Flow<HookedUserData?>
+
+    fun getHasSeenOnboarding(): Flow<Boolean>
+    suspend fun updateHasSeenOnboarding(hasSeenOnboarding: Boolean)
+}
+
 class HookedPreferencesDataSource @Inject constructor(
-    context: Context
-) {
+    @ApplicationContext context: Context
+): PreferencesDataSource {
     private val preferences = context.dataStore
-    private val userDataKey = stringPreferencesKey("user_data")
+    private val userDataKey = stringPreferencesKey("user_data_json")
+    private val authStateKey = stringPreferencesKey("auth_state_json")
 
-    fun getAuthState(): Flow<AuthState?> = getUserData().map { it?.authState }
+    override suspend fun initUserData() {
+        preferences.edit {
+            if (it[userDataKey] == null) {
+                it[userDataKey] = Json.encodeToString(HookedUserData(false))
+            }
+        }
+    }
 
-    suspend fun updateAuthState(authState: AuthState?) = updateUserData(authState = authState)
+    override fun getAuthState(): Flow<AuthState?> = preferences.data.map { preferences ->
+        preferences[authStateKey]?.let {
+            try {
+                AuthState.jsonDeserialize(it)
+            } catch (e: Exception) {
+                Log.e("HookedPrefsDataSource", "Error getting auth state", e)
+                null
+            }
+        }
+    }
 
-    fun getShouldShowOnboarding(): Flow<Boolean> =
-        getUserData().map { it?.shouldShowOnboarding ?: true }
+    override suspend fun updateAuthState(authState: AuthState) {
+        preferences.edit { mutablePrefs ->
+            authState.jsonSerializeString()
+            mutablePrefs[authStateKey] = authState.jsonSerializeString()
+        }
+    }
 
-    suspend fun updateShouldShowOnboarding(shouldShowOnboarding: Boolean) =
-        updateUserData(shouldShowOnboarding = shouldShowOnboarding)
+    override fun getHasSeenOnboarding(): Flow<Boolean> =
+        getUserData().map { it?.hasSeenOnboarding ?: false }
 
-    private fun getUserData() = preferences.data.map { preferences ->
+    override suspend fun updateHasSeenOnboarding(hasSeenOnboarding: Boolean) =
+        updateUserData(hasSeenOnboarding = hasSeenOnboarding)
+
+    override fun getUserData() = preferences.data.map { preferences ->
         preferences[userDataKey]?.let {
             try {
-                Json.decodeFromString<UserData>(it)
+                Json.decodeFromString<HookedUserData>(it)
             } catch (e: Exception) {
                 Log.e("HookedPrefsDataSource", "Error getting user data", e)
                 null
@@ -47,16 +81,14 @@ class HookedPreferencesDataSource @Inject constructor(
     }
 
     private suspend fun updateUserData(
-        authState: AuthState? = null,
-        shouldShowOnboarding: Boolean? = null
+        hasSeenOnboarding: Boolean? = null
     ) {
         preferences.edit { mutablePrefs ->
-            val userData = mutablePrefs[userDataKey]?.let { Json.decodeFromString<UserData>(it) }
+            val userData = mutablePrefs[userDataKey]?.let { Json.decodeFromString<HookedUserData>(it) }
 
             userData?.let {
-                val newData = userData.copy(
-                    authState = authState ?: it.authState,
-                    shouldShowOnboarding = shouldShowOnboarding ?: it.shouldShowOnboarding
+                val newData = it.copy(
+                    hasSeenOnboarding = hasSeenOnboarding ?: userData.hasSeenOnboarding
                 )
 
                 mutablePrefs[userDataKey] = Json.encodeToString(newData)
