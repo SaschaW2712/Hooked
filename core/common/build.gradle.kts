@@ -6,16 +6,6 @@ plugins {
 android {
     namespace = "com.saschaw.hooked.core.common"
     compileSdk = 34
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
-        }
-    }
 }
 
 dependencies {

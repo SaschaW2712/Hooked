@@ -7,7 +7,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
-import com.saschaw.hooked.core.model.HookedUserData
+import com.saschaw.hooked.core.model.HookedAppUserData
+import com.saschaw.hooked.core.model.RavelryUser
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -22,77 +23,92 @@ interface PreferencesDataSource {
     suspend fun initUserData()
 
     fun getAuthState(): Flow<AuthState?>
-    suspend fun updateAuthState(authState: AuthState)
+    suspend fun updateAuthState(authState: AuthState?)
 
-    fun getUserData(): Flow<HookedUserData?>
+    suspend fun updateAppUserData(hasSeenOnboarding: Boolean? = null, ravelryUser: RavelryUser? = null)
 
     fun getHasSeenOnboarding(): Flow<Boolean>
-    suspend fun updateHasSeenOnboarding(hasSeenOnboarding: Boolean)
+    fun getRavelryUser(): Flow<RavelryUser?>
 }
 
 class HookedPreferencesDataSource @Inject constructor(
     @ApplicationContext context: Context
 ): PreferencesDataSource {
     private val preferences = context.dataStore
+
     private val userDataKey = stringPreferencesKey("user_data_json")
     private val authStateKey = stringPreferencesKey("auth_state_json")
 
     override suspend fun initUserData() {
         preferences.edit {
             if (it[userDataKey] == null) {
-                it[userDataKey] = Json.encodeToString(HookedUserData(false))
+                it[userDataKey] = Json.encodeToString(HookedAppUserData(false, null))
             }
         }
     }
 
     override fun getAuthState(): Flow<AuthState?> = preferences.data.map { preferences ->
-        preferences[authStateKey]?.let {
+        val authState = preferences[authStateKey]
+
+        return@map if (authState.isNullOrEmpty()) {
+            null
+        } else {
             try {
-                AuthState.jsonDeserialize(it)
+                AuthState.jsonDeserialize(authState)
             } catch (e: Exception) {
-                Log.e("HookedPrefsDataSource", "Error getting auth state", e)
+                Log.e("HookedPrefsDataSource", "Error deserializing auth state", e)
                 null
             }
         }
     }
 
-    override suspend fun updateAuthState(authState: AuthState) {
+
+    override suspend fun updateAuthState(authState: AuthState?) {
         preferences.edit { mutablePrefs ->
-            authState.jsonSerializeString()
-            mutablePrefs[authStateKey] = authState.jsonSerializeString()
+            val newValue = authState?.jsonSerializeString() ?: ""
+
+            mutablePrefs[authStateKey] = newValue
         }
     }
 
     override fun getHasSeenOnboarding(): Flow<Boolean> =
-        getUserData().map { it?.hasSeenOnboarding ?: false }
+        getAppUserData().map { it?.hasSeenOnboarding ?: false }
 
-    override suspend fun updateHasSeenOnboarding(hasSeenOnboarding: Boolean) =
-        updateUserData(hasSeenOnboarding = hasSeenOnboarding)
+    override fun getRavelryUser(): Flow<RavelryUser?> =
+        getAppUserData().map { it?.ravelryUser }
 
-    override fun getUserData() = preferences.data.map { preferences ->
+
+    private fun getAppUserData() = preferences.data.map { preferences ->
         preferences[userDataKey]?.let {
             try {
-                Json.decodeFromString<HookedUserData>(it)
+                Json.decodeFromString<HookedAppUserData>(it)
             } catch (e: Exception) {
-                Log.e("HookedPrefsDataSource", "Error getting user data", e)
+                Log.e("HookedPrefsDataSource", "Error deserializing user data", e)
                 null
             }
         }
     }
 
-    private suspend fun updateUserData(
-        hasSeenOnboarding: Boolean? = null
+    override suspend fun updateAppUserData(
+        hasSeenOnboarding: Boolean?,
+        ravelryUser: RavelryUser?
     ) {
-        preferences.edit { mutablePrefs ->
-            val userData = mutablePrefs[userDataKey]?.let { Json.decodeFromString<HookedUserData>(it) }
+        try {
+            preferences.edit { mutablePrefs ->
+                val userData =
+                    mutablePrefs[userDataKey]?.let { Json.decodeFromString<HookedAppUserData>(it) }
 
-            userData?.let {
-                val newData = it.copy(
-                    hasSeenOnboarding = hasSeenOnboarding ?: userData.hasSeenOnboarding
-                )
+                userData?.let {
+                    val newData = it.copy(
+                        hasSeenOnboarding = hasSeenOnboarding ?: userData.hasSeenOnboarding,
+                        ravelryUser = ravelryUser ?: userData.ravelryUser
+                    )
 
-                mutablePrefs[userDataKey] = Json.encodeToString(newData)
+                    mutablePrefs[userDataKey] = Json.encodeToString(newData)
+                }
             }
+        } catch (e: Exception) {
+            Log.e("HookedPrefsDataSource", "Error updating user data", e)
         }
     }
 }

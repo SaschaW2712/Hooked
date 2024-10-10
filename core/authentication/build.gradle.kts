@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.openId.appAuth)
     implementation(libs.dagger.hilt.android)
     implementation(project(":core:datastore"))
+    implementation(libs.okhttp)
     ksp(libs.dagger.hilt.compiler)
 
     testImplementation(libs.androidx.junit)

@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import com.saschaw.hooked.core.authentication.AuthenticationManager
 import com.saschaw.hooked.core.datastore.PreferencesDataSource
 import com.saschaw.hooked.core.designsystem.theme.HookedTheme
 import com.saschaw.hooked.ui.HookedApp
@@ -19,6 +20,9 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
     @Inject
     lateinit var preferences: PreferencesDataSource
+
+    @Inject
+    lateinit var authenticationManager: AuthenticationManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +36,7 @@ class MainActivity : ComponentActivity() {
 
             enableEdgeToEdge()
 
-            val appState = rememberHookedAppState(preferences)
+            val appState = rememberHookedAppState(authenticationManager, preferences)
 
             HookedTheme {
                 HookedApp(appState)

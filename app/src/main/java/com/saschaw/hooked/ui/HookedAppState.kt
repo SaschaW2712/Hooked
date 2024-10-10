@@ -1,6 +1,5 @@
 package com.saschaw.hooked.ui
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -12,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
+import com.saschaw.hooked.core.authentication.AuthenticationManager
 import com.saschaw.hooked.core.datastore.PreferencesDataSource
 import com.saschaw.hooked.feature.browse.navigation.navigateToBrowse
 import com.saschaw.hooked.feature.favorites.navigation.navigateToFavorites
@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.combine
 
 @Composable
 fun rememberHookedAppState(
+    authenticationManager: AuthenticationManager,
     preferences: PreferencesDataSource,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
@@ -34,6 +35,7 @@ fun rememberHookedAppState(
         coroutineScope,
     ) {
         HookedAppState(
+            authenticationManager = authenticationManager,
             preferences = preferences,
             navController = navController,
             coroutineScope = coroutineScope,
@@ -42,6 +44,7 @@ fun rememberHookedAppState(
 
 @Stable
 class HookedAppState(
+    val authenticationManager: AuthenticationManager,
     val preferences: PreferencesDataSource,
     val navController: NavHostController,
     coroutineScope: CoroutineScope,
@@ -82,11 +85,11 @@ class HookedAppState(
         }
     }
 
-    fun getOnboardingState(): Flow<OnboardingState> {
-        return preferences.getUserData().combine(preferences.getAuthState()) { userData, authState ->
-            userData?.let {
+    fun getOnboardingState(): Flow<OnboardingState> =
+        preferences.getHasSeenOnboarding().combine(preferences.getAuthState()) { userData, authState ->
+            userData.let {
                 return@let when {
-                    !it.hasSeenOnboarding -> OnboardingState.ShowOnboarding()
+                    !it -> OnboardingState.ShowOnboarding()
                     authState == null || !authState.isAuthorized -> {
                         val loggedOutMessage =
                             "You have been logged out. Please connect your account again to continue."
@@ -95,12 +98,16 @@ class HookedAppState(
 
                     else -> OnboardingState.HideOnboarding
                 }
-            } ?: OnboardingState.ShowOnboarding()
+            }
         }
-    }
 
     suspend fun onboardingDismissed() {
-        preferences.updateHasSeenOnboarding(true)
+        preferences.updateAppUserData(hasSeenOnboarding = true)
+    }
+
+    // TODO: bad
+    fun getMyAuthenticationManager(): AuthenticationManager {
+        return authenticationManager
     }
 }
 
