@@ -1,6 +1,5 @@
 package com.saschaw.hooked.ui
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
@@ -86,11 +85,11 @@ class HookedAppState(
         }
     }
 
-    fun getOnboardingState(): Flow<OnboardingState> {
-        return preferences.getUserData().combine(preferences.getAuthState()) { userData, authState ->
-            userData?.let {
+    fun getOnboardingState(): Flow<OnboardingState> =
+        preferences.getHasSeenOnboarding().combine(preferences.getAuthState()) { userData, authState ->
+            userData.let {
                 return@let when {
-                    !it.hasSeenOnboarding -> OnboardingState.ShowOnboarding()
+                    !it -> OnboardingState.ShowOnboarding()
                     authState == null || !authState.isAuthorized -> {
                         val loggedOutMessage =
                             "You have been logged out. Please connect your account again to continue."
@@ -99,14 +98,14 @@ class HookedAppState(
 
                     else -> OnboardingState.HideOnboarding
                 }
-            } ?: OnboardingState.ShowOnboarding()
+            }
         }
-    }
 
     suspend fun onboardingDismissed() {
-        preferences.updateHasSeenOnboarding(true)
+        preferences.updateAppUserData(hasSeenOnboarding = true)
     }
 
+    // TODO: bad
     fun getMyAuthenticationManager(): AuthenticationManager {
         return authenticationManager
     }
