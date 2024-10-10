@@ -190,9 +190,14 @@ class RavelryAuthenticationManager @Inject constructor() : AuthenticationManager
         authResponse: AuthorizationResponse?,
         authException: AuthorizationException?
     ) {
-        val authState = preferences.getAuthState().firstOrNull()
+        val authState = preferences.getAuthState().firstOrNull() ?: AuthState(
+            AuthorizationServiceConfiguration(
+                Uri.parse(AuthConfig.AUTH_URI),
+                Uri.parse(AuthConfig.TOKEN_URI)
+            )
+        )
 
-        authState?.update(authResponse, authException)
+        authState.update(authResponse, authException)
         preferences.updateAuthState(authState)
     }
 
@@ -200,9 +205,14 @@ class RavelryAuthenticationManager @Inject constructor() : AuthenticationManager
         tokenResponse: TokenResponse?,
         authException: AuthorizationException?
     ) {
-        val authState = preferences.getAuthState().firstOrNull()
+        val authState = preferences.getAuthState().firstOrNull() ?: AuthState(
+            AuthorizationServiceConfiguration(
+                Uri.parse(AuthConfig.AUTH_URI),
+                Uri.parse(AuthConfig.TOKEN_URI)
+            )
+        )
 
-        authState?.update(tokenResponse, authException)
+        authState.update(tokenResponse, authException)
         preferences.updateAuthState(authState)
     }
 
@@ -222,7 +232,6 @@ class RavelryAuthenticationManager @Inject constructor() : AuthenticationManager
                         )
                     } catch (ex: Exception) {
                         clearAuthState()
-                        throw ex
                     }
                 }
             }

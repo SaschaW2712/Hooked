@@ -31,6 +31,7 @@ dependencies {
     implementation(libs.dagger.hilt.android)
     implementation(libs.okhttp)
     implementation(project(":core:authentication"))
+    implementation(project(":core:model"))
     ksp(libs.dagger.hilt.compiler)
 
     testImplementation(libs.androidx.junit)
