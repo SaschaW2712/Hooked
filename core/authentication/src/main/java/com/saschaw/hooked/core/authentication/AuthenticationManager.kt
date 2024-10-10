@@ -7,8 +7,8 @@ import androidx.browser.customtabs.CustomTabsIntent
 import com.saschaw.hooked.core.datastore.HookedPreferencesDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationException
 import net.openid.appauth.AuthorizationRequest
@@ -20,18 +20,13 @@ import net.openid.appauth.ClientSecretBasic
 import net.openid.appauth.ResponseTypeValues
 import net.openid.appauth.TokenRequest
 import net.openid.appauth.TokenResponse
-import okhttp3.Authenticator
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.Route
 import javax.inject.Inject
 
 interface AuthenticationManager {
-    var authState: AuthState
-    fun getAuthorizationIntent(additionalScopes: List<RavelryAuthenticationScope> = emptyList()): Intent
+    fun getAuthorizationIntent(): Intent
     fun onAuthorizationResult(result: ActivityResult)
-    fun doAuthenticated(function: (String?, String?) -> Unit)
-    fun refreshTokensIfNeededBlocking()
+    fun doAuthenticated(function: (String?, String?) -> Unit, onError: (Exception) -> Unit)
+    fun refreshTokensIfNeeded()
 }
 
 enum class RavelryAuthenticationScope(name: String) {
@@ -46,12 +41,9 @@ enum class RavelryAuthenticationScope(name: String) {
     CartsOnly("carts-only"),
 }
 
-class RavelryAuthenticationManager @Inject constructor(): AuthenticationManager {
+class RavelryAuthenticationManager @Inject constructor() : AuthenticationManager {
     @Inject
     lateinit var authService: AuthorizationService
-
-    @Inject
-    override lateinit var authState: AuthState
 
     @Inject
     lateinit var preferences: HookedPreferencesDataSource
@@ -61,8 +53,8 @@ class RavelryAuthenticationManager @Inject constructor(): AuthenticationManager 
     private val appCallbackUri = AuthConfig.CALLBACK_URL
     private val clientAuthentication: ClientAuthentication = ClientSecretBasic(clientSecret)
 
-    override fun getAuthorizationIntent(additionalScopes: List<RavelryAuthenticationScope>): Intent {
-        val authRequest = buildAuthRequest(additionalScopes)
+    override fun getAuthorizationIntent(): Intent {
+        val authRequest = buildAuthRequest()
 
         return authService.getAuthorizationRequestIntent(
             authRequest,
@@ -81,21 +73,46 @@ class RavelryAuthenticationManager @Inject constructor(): AuthenticationManager 
 
             exception?.let {
                 // Handle exception
-                throw exception
+                CoroutineScope(Dispatchers.IO).launch {
+                    clearAuthState()
+                }
+                return
             }
 
-            response?.createTokenExchangeRequest()?.let {
-
-                performTokenRequest(
-                    authService,
-                    clientAuthentication,
-                    it
-                )
+            try {
+                response?.createTokenExchangeRequest()?.let {
+                    try {
+                        performTokenRequest(
+                            authService,
+                            clientAuthentication,
+                            it
+                        )
+                    } catch (ex: Exception) {
+                        CoroutineScope(Dispatchers.IO).launch {
+                            clearAuthState()
+                        }
+                    }
+                }
+            } catch (ex: Exception) {
+                CoroutineScope(Dispatchers.IO).launch {
+                    clearAuthState()
+                }
             }
         }
     }
 
-    private fun buildAuthRequest(additionalScopes: List<RavelryAuthenticationScope>?): AuthorizationRequest {
+    private fun buildAuthRequest(): AuthorizationRequest {
+        val authState = AuthState(
+            AuthorizationServiceConfiguration(
+                Uri.parse(AuthConfig.AUTH_URI),
+                Uri.parse(AuthConfig.TOKEN_URI)
+            )
+        )
+
+        CoroutineScope(Dispatchers.IO).launch {
+            preferences.updateAuthState(authState)
+        }
+
         val authRequestBuilder = AuthorizationRequest.Builder(
             authState.authorizationServiceConfiguration
                 ?: AuthorizationServiceConfiguration(
@@ -107,9 +124,7 @@ class RavelryAuthenticationManager @Inject constructor(): AuthenticationManager 
             Uri.parse(appCallbackUri)
         )
 
-        if (!additionalScopes.isNullOrEmpty()) {
-            authRequestBuilder.setScope(additionalScopes.joinToString(" "))
-        }
+        authRequestBuilder.setScope("offline")
 
         return authRequestBuilder.build()
     }
@@ -119,68 +134,98 @@ class RavelryAuthenticationManager @Inject constructor(): AuthenticationManager 
         clientAuthentication: ClientAuthentication,
         tokenRequest: TokenRequest,
     ) {
-        authService.performTokenRequest(tokenRequest, clientAuthentication) { response, exception ->
+        try {
+            authService.performTokenRequest(
+                tokenRequest,
+                clientAuthentication
+            ) { response, exception ->
+                CoroutineScope(Dispatchers.IO).launch {
+                    updateAuthState(response, exception)
+                }
+            }
+        } catch (ex: Exception) {
             CoroutineScope(Dispatchers.IO).launch {
-                updateAuthState(response, exception)
+                clearAuthState()
             }
         }
     }
 
-    private fun performTokenRequestBlocking(
-        authService: AuthorizationService,
-        clientAuthentication: ClientAuthentication,
-        tokenRequest: TokenRequest,
+    override fun doAuthenticated(function: (String?, String?) -> Unit, onError: (Exception) -> Unit) {
+        try {
+            refreshTokensIfNeeded()
+        } catch (ex: Exception) {
+            // User needs to authenticate again and their auth state has been cleared, don't continue.
+            onError(ex)
+            return
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            preferences.getAuthState().firstOrNull().let {
+                if (it != null) {
+                    it.performActionWithFreshTokens(authService) { accessToken, idToken, ex ->
+                        ex?.let {
+                            // Handle error
+                            CoroutineScope(Dispatchers.IO).launch {
+                                clearAuthState()
+                            }
+                            return@performActionWithFreshTokens
+                        }
+
+                        function(accessToken, idToken)
+                    }
+                } else {
+                    // TODO: better exception
+                    onError(Exception())
+                }
+            }
+        }
+    }
+
+    // Triggers onboarding and login prompt to show
+    private suspend fun clearAuthState() {
+        preferences.updateAuthState(null)
+    }
+
+    private suspend fun updateAuthState(
+        authResponse: AuthorizationResponse?,
+        authException: AuthorizationException?
     ) {
-        authService.performTokenRequest(tokenRequest, clientAuthentication) { response, exception ->
-            runBlocking {
-                updateAuthState(response, exception)
-            }
-        }
-    }
+        val authState = preferences.getAuthState().firstOrNull()
 
-    override fun doAuthenticated(function: (String?, String?) -> Unit) {
-        authState.performActionWithFreshTokens(authService) { accessToken, idToken, ex ->
-            ex?.let {
-                // Handle error
-                throw ex
-            }
-
-            function(accessToken, idToken)
-        }
-    }
-
-    private suspend fun updateAuthState(authResponse: AuthorizationResponse?, authException: AuthorizationException?) {
-        authState.update(authResponse, authException)
+        authState?.update(authResponse, authException)
         preferences.updateAuthState(authState)
     }
 
-    private suspend fun updateAuthState(tokenResponse: TokenResponse?, authException: AuthorizationException?) {
-        authState.update(tokenResponse, authException)
+    private suspend fun updateAuthState(
+        tokenResponse: TokenResponse?,
+        authException: AuthorizationException?
+    ) {
+        val authState = preferences.getAuthState().firstOrNull()
+
+        authState?.update(tokenResponse, authException)
         preferences.updateAuthState(authState)
     }
 
-    override fun refreshTokensIfNeededBlocking() {
-        if (authState.needsTokenRefresh) {
-            performTokenRequestBlocking(
-                authService,
-                clientAuthentication,
-                authState.createTokenRefreshRequest()
-            )
+    override fun refreshTokensIfNeeded() {
+        CoroutineScope(Dispatchers.IO).launch {
+            preferences.getAuthState().collect {
+
+                if (it == null) {
+                    // Need full auth
+                    clearAuthState()
+                } else if (it.needsTokenRefresh) {
+                    try {
+                        performTokenRequest(
+                            authService,
+                            clientAuthentication,
+                            it.createTokenRefreshRequest()
+                        )
+                    } catch (ex: Exception) {
+                        clearAuthState()
+                        throw ex
+                    }
+                }
+            }
         }
     }
 }
-
-//class TokenAuthenticator @Inject constructor(
-//    private val authenticationManager: AuthenticationManager
-//): Authenticator {
-//    override fun authenticate(route: Route?, response: Response): Request? {
-//        // Refresh your access_token using a synchronous api request
-//        authenticationManager.refreshTokensIfNeededBlocking()
-//        val newAccessToken = authenticationManager.authState.accessToken
-//
-//        // Add new header to rejected request and retry it
-//        return response.request.newBuilder()
-//            .header("Authorization", "Bearer $newAccessToken")
-//            .build()
-//    }
-//}

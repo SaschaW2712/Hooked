@@ -30,7 +30,6 @@ interface RetrofitHookedRavelryApi {
 @Singleton
 internal class RetrofitHookedNetwork @Inject constructor(
     private val authenticationManager: AuthenticationManager,
-    private val tokenAuthenticator: Authenticator
 ): HookedNetworkDataSource {
     private val networkApi =
         Retrofit.Builder()
@@ -47,18 +46,23 @@ internal class RetrofitHookedNetwork @Inject constructor(
     override suspend fun refreshFavoritesList(): FavoritesListPaginated {
         val deferred = CompletableDeferred<FavoritesListPaginated>()
 
-        authenticationManager.doAuthenticated { accessToken, _ ->
-            accessToken?.let {
-                CoroutineScope(Dispatchers.IO).launch {
-                    try {
-                        val response = networkApi.getFavoritesList("Sajalow", it)
-                        deferred.complete(response)
-                    } catch (e: Exception) {
-                        deferred.completeExceptionally(e)
+        authenticationManager.doAuthenticated(
+            function = { accessToken, _ ->
+                accessToken?.let {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val response = networkApi.getFavoritesList("Sajalow", it)
+                            deferred.complete(response)
+                        } catch (e: Exception) {
+                            deferred.completeExceptionally(e)
+                        }
                     }
                 }
+            },
+            onError = {
+                deferred.completeExceptionally(it)
             }
-        }
+        )
 
         return deferred.await()
     }

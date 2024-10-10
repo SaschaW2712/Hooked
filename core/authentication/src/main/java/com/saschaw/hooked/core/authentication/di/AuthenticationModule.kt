@@ -27,18 +27,6 @@ abstract class AuthenticationModule {
         ): AuthorizationService {
             return AuthorizationService(context)
         }
-
-        @Provides
-        @Singleton
-        fun provideAuthState(
-        ): AuthState {
-            return AuthState(
-                AuthorizationServiceConfiguration(
-                    Uri.parse(AuthConfig.AUTH_URI),
-                    Uri.parse(AuthConfig.TOKEN_URI)
-                )
-            )
-        }
     }
 
     @Binds

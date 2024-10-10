@@ -22,7 +22,7 @@ interface PreferencesDataSource {
     suspend fun initUserData()
 
     fun getAuthState(): Flow<AuthState?>
-    suspend fun updateAuthState(authState: AuthState)
+    suspend fun updateAuthState(authState: AuthState?)
 
     fun getUserData(): Flow<HookedUserData?>
 
@@ -46,20 +46,25 @@ class HookedPreferencesDataSource @Inject constructor(
     }
 
     override fun getAuthState(): Flow<AuthState?> = preferences.data.map { preferences ->
-        preferences[authStateKey]?.let {
-            try {
-                AuthState.jsonDeserialize(it)
-            } catch (e: Exception) {
-                Log.e("HookedPrefsDataSource", "Error getting auth state", e)
-                null
-            }
+        val authStatePref = preferences[authStateKey]
+        if (authStatePref.isNullOrEmpty()) {
+            return@map null
+        }
+
+        try {
+            AuthState.jsonDeserialize(authStatePref)
+        } catch (e: Exception) {
+            Log.e("HookedPrefsDataSource", "Error getting auth state", e)
+            null
         }
     }
 
-    override suspend fun updateAuthState(authState: AuthState) {
+
+    override suspend fun updateAuthState(authState: AuthState?) {
         preferences.edit { mutablePrefs ->
-            authState.jsonSerializeString()
-            mutablePrefs[authStateKey] = authState.jsonSerializeString()
+            val newValue = authState?.jsonSerializeString() ?: ""
+
+            mutablePrefs[authStateKey] = newValue
         }
     }
 

@@ -35,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
+import com.saschaw.hooked.core.authentication.AuthenticationManager
 import com.saschaw.hooked.core.designsystem.navigation.HookedNavigationSuiteScaffold
 import com.saschaw.hooked.feature.onboarding.OnboardingScreen
 import com.saschaw.hooked.navigation.HookedNavHost
@@ -62,6 +63,7 @@ fun HookedApp(
                 snackbarHostState = snackbarHostState,
                 modifier = modifier,
                 windowAdaptiveInfo = windowAdaptiveInfo,
+                authenticationManager = appState.getMyAuthenticationManager()
             )
         }
     }
@@ -77,13 +79,14 @@ internal fun HookedApp(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
+    authenticationManager: AuthenticationManager,
 ) {
     val currentDestination = appState.currentDestination
 
     val onboardingState = appState.getOnboardingState().collectAsStateWithLifecycle(OnboardingState.ShowOnboarding())
 
     AnimatedVisibility(onboardingState.value != OnboardingState.HideOnboarding) {
-        OnboardingScreen(modifier, snackbarHostState) {
+        OnboardingScreen(modifier, snackbarHostState, authenticationManager) {
             CoroutineScope(Dispatchers.IO).launch {
                 appState.onboardingDismissed()
             }

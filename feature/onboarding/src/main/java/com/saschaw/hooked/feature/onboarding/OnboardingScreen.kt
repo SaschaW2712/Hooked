@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.saschaw.hooked.core.authentication.AuthenticationManager
 import com.saschaw.hooked.core.designsystem.components.ColorStyle
 import com.saschaw.hooked.core.designsystem.components.HighlightedText
 import com.saschaw.hooked.core.designsystem.components.TitleWithLogo
@@ -44,11 +45,10 @@ import com.saschaw.hooked.core.designsystem.theme.HookedTheme
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
-    viewModel: OnboardingScreenViewModel = hiltViewModel(),
+    authenticationManager: AuthenticationManager,
     onFinishOnboarding: () -> Unit,
 ) {
     val state = rememberScrollState()
-    val authenticationManager = viewModel.authenticationManager
 
     val authLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -117,7 +117,7 @@ fun OnboardingScreen(
 private fun BrowseScreenPreview() {
     HookedTheme {
         Surface {
-            OnboardingScreen(snackbarHostState = remember { SnackbarHostState() }) {}
+//            OnboardingScreen(snackbarHostState = remember { SnackbarHostState() }) {}
         }
     }
 }

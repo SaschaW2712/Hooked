@@ -32,13 +32,13 @@ fun FavoritesScreen(
     val state = rememberScrollState()
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
 
-    when (uiState.value) {
+    when (val uiStateValue = uiState.value) {
         FavoritesScreenUiState.Loading -> {
             CircularProgressIndicator()
         }
 
         is FavoritesScreenUiState.Error -> {
-            Text("problemo")
+            Text(uiStateValue.exception.toString())
         }
 
         is FavoritesScreenUiState.Success -> {
