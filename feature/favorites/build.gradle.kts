@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.dagger.hilt.android)
     implementation(project(":core:data"))
     implementation(project(":core:network"))
+    implementation(project(":core:model"))
     testImplementation(libs.androidx.junit)
     implementation(libs.androidx.hilt.navigation.compose)
 

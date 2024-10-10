@@ -47,7 +47,7 @@ fun FavoritesScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text("Wow, headline!", style = MaterialTheme.typography.headlineMedium)
+                Text("Welcome, ${uiStateValue.username}!", style = MaterialTheme.typography.headlineMedium)
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),

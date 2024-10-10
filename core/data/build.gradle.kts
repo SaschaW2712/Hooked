@@ -19,6 +19,7 @@ dependencies {
     implementation(libs.dagger.hilt.android)
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(project(":core:model"))
     ksp(libs.dagger.hilt.compiler)
 
     implementation(project(":core:network"))

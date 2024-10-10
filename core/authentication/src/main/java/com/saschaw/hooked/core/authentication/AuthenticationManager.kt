@@ -27,6 +27,7 @@ interface AuthenticationManager {
     fun onAuthorizationResult(result: ActivityResult)
     fun doAuthenticated(function: (String?, String?) -> Unit, onError: (Exception) -> Unit)
     fun refreshTokensIfNeeded()
+    fun invalidateAuthentication()
 }
 
 enum class RavelryAuthenticationScope(name: String) {
@@ -235,6 +236,12 @@ class RavelryAuthenticationManager @Inject constructor() : AuthenticationManager
                     }
                 }
             }
+        }
+    }
+
+    override fun invalidateAuthentication() {
+        CoroutineScope(Dispatchers.IO).launch {
+            clearAuthState()
         }
     }
 }

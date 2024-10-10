@@ -3,13 +3,11 @@ package com.saschaw.hooked.feature.favorites
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saschaw.hooked.core.data.repository.RavelryUserDataRepository
-import com.saschaw.hooked.core.network.FavoritesListPaginated
+import com.saschaw.hooked.core.model.FavoritesListPaginated
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,7 +22,8 @@ class FavoritesScreenViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val favorites = ravelryUserDataRepository.getFavoritesList()
-                _uiState.value = FavoritesScreenUiState.Success(favorites)
+                val username = ravelryUserDataRepository.getCurrentUser().username
+                _uiState.value = FavoritesScreenUiState.Success(favorites, username)
             } catch (e: Exception) {
                 _uiState.value = FavoritesScreenUiState.Error(e)
             }
@@ -34,6 +33,6 @@ class FavoritesScreenViewModel @Inject constructor(
 
 sealed interface FavoritesScreenUiState {
     data object Loading : FavoritesScreenUiState
-    data class Success(val favorites: FavoritesListPaginated) : FavoritesScreenUiState
+    data class Success(val favorites: FavoritesListPaginated, val username: String) : FavoritesScreenUiState
     data class Error(val exception: Exception) : FavoritesScreenUiState
 }
