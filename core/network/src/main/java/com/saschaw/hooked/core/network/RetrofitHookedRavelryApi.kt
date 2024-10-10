@@ -3,7 +3,7 @@ package com.saschaw.hooked.core.network
 import com.saschaw.hooked.core.authentication.AuthenticationManager
 import com.saschaw.hooked.core.datastore.PreferencesDataSource
 import com.saschaw.hooked.core.model.FavoritesListPaginated
-import com.saschaw.hooked.core.model.User
+import com.saschaw.hooked.core.model.RavelryUser
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +36,7 @@ interface RetrofitHookedRavelryApi {
 
 @Serializable
 data class CurrentUserResponse(
-    val user: User
+    val ravelryUser: RavelryUser
 )
 
 @Singleton
@@ -85,8 +85,8 @@ internal class RetrofitHookedNetwork @Inject constructor(
         return deferred.await()
     }
 
-    override suspend fun getCurrentUser(): User {
-        val deferred = CompletableDeferred<User>()
+    override suspend fun getCurrentUser(): RavelryUser {
+        val deferred = CompletableDeferred<RavelryUser>()
 
         authenticationManager.doAuthenticated(
             function = { accessToken, _ ->
@@ -94,7 +94,7 @@ internal class RetrofitHookedNetwork @Inject constructor(
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             val response = networkApi.getCurrentUser("Bearer $it")
-                            deferred.complete(response.user)
+                            deferred.complete(response.ravelryUser)
                         } catch (e: Exception) {
                             deferred.completeExceptionally(e)
                         }
