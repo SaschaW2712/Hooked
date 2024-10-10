@@ -125,7 +125,7 @@ class RavelryAuthenticationManager @Inject constructor() : AuthenticationManager
             Uri.parse(appCallbackUri)
         )
 
-        authRequestBuilder.setScope("offline")
+        authRequestBuilder.setScope(AuthConfig.SCOPES)
 
         return authRequestBuilder.build()
     }

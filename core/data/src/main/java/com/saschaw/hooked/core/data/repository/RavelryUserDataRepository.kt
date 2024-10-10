@@ -1,13 +1,13 @@
 package com.saschaw.hooked.core.data.repository
 
 import com.saschaw.hooked.core.model.FavoritesListPaginated
-import com.saschaw.hooked.core.model.User
+import com.saschaw.hooked.core.model.RavelryUser
 import com.saschaw.hooked.core.network.HookedNetworkDataSource
 import javax.inject.Inject
 
 interface RavelryUserDataRepository {
     suspend fun getFavoritesList(): FavoritesListPaginated
-    suspend fun getCurrentUser(): User
+    suspend fun getCurrentUser(): RavelryUser
 }
 
 internal class RavelryUserDataRepositoryImpl @Inject constructor(
@@ -17,7 +17,7 @@ internal class RavelryUserDataRepositoryImpl @Inject constructor(
         return network.getFavoritesList()
     }
 
-    override suspend fun getCurrentUser(): User {
+    override suspend fun getCurrentUser(): RavelryUser {
         return network.getCurrentUser()
     }
 }
