@@ -58,7 +58,6 @@ dependencies {
     implementation(libs.androidx.material3.adaptive.navigation.suite.android)
     implementation(project(":core:data"))
     ksp(libs.dagger.hilt.compiler)
-    implementation(project(":core:common"))
     implementation(project(":core:designsystem"))
     implementation(project(":core:authentication"))
     implementation(project(":feature:onboarding"))

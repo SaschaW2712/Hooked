@@ -20,7 +20,6 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.kotlinx.coroutines.android)
     implementation(project(":core:model"))
-    implementation(project(":core:datastore"))
     ksp(libs.dagger.hilt.compiler)
 
     implementation(project(":core:network"))

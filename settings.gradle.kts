@@ -24,7 +24,6 @@ rootProject.name = "Hooked"
 include(":app")
 include(":core")
 include(":core:authentication")
-include(":core:common")
 include(":core:datastore")
 include(":core:designsystem")
 include(":core:model")
