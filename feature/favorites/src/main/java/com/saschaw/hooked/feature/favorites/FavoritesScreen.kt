@@ -163,7 +163,7 @@ fun FavoritesScreenSuccessContent(
                                 painter = painterResource(com.saschaw.hooked.core.designsystem.R.drawable.app_logo),
                                 modifier = Modifier
                                     .padding(top = 2.dp)
-                                    .size(32.dp)
+                                    .size(40.dp)
                                     .clip(CircleShape),
                                 contentDescription = null
                             )

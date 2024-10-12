@@ -6,9 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.saschaw.hooked.core.authentication.AuthenticationManager
+import com.saschaw.hooked.core.datastore.HookedPreferencesDataSource
 import com.saschaw.hooked.core.datastore.PreferencesDataSource
 import com.saschaw.hooked.core.designsystem.theme.HookedTheme
 import com.saschaw.hooked.ui.HookedApp
@@ -48,5 +49,5 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppAndroid_Preview() {
     // TODO: Figure out how to spoof preferences
-//    HookedApp(rememberHookedAppState())
+    HookedApp(rememberHookedAppState(HookedPreferencesDataSource(LocalContext.current)))
 }

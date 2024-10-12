@@ -7,15 +7,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -29,23 +24,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.saschaw.hooked.core.authentication.AuthenticationManager
+import com.saschaw.hooked.core.authentication.RavelryAuthenticationManager
+import com.saschaw.hooked.core.datastore.HookedPreferencesDataSource
 import com.saschaw.hooked.core.designsystem.components.ColorStyle
 import com.saschaw.hooked.core.designsystem.components.HighlightedText
 import com.saschaw.hooked.core.designsystem.components.TitleWithLogo
 import com.saschaw.hooked.core.designsystem.theme.HookedTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
-    onFinishOnboarding: () -> Unit,
     viewModel: OnboardingScreenViewModel = hiltViewModel()
 ) {
     val state = rememberScrollState()
@@ -53,7 +52,10 @@ fun OnboardingScreen(
     val authLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             viewModel.authenticationManager.onAuthorizationResult(it)
-            onFinishOnboarding()
+
+            CoroutineScope(Dispatchers.IO).launch {
+                viewModel.dismissOnboarding()
+            }
         }
 
     Scaffold(
@@ -117,7 +119,13 @@ fun OnboardingScreen(
 private fun BrowseScreenPreview() {
     HookedTheme {
         Surface {
-//            OnboardingScreen(snackbarHostState = remember { SnackbarHostState() }) {}
+            OnboardingScreen(
+                snackbarHostState = remember { SnackbarHostState() },
+                viewModel = OnboardingScreenViewModel(
+                    RavelryAuthenticationManager(),
+                    preferences = HookedPreferencesDataSource(LocalContext.current)
+                )
+            )
         }
     }
 }

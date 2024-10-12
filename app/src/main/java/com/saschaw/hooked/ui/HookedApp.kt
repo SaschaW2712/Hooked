@@ -82,11 +82,7 @@ internal fun HookedApp(
     val onboardingState = appState.getOnboardingState().collectAsStateWithLifecycle(OnboardingState.ShowOnboarding())
 
     AnimatedVisibility(onboardingState.value != OnboardingState.HideOnboarding) {
-        OnboardingScreen(modifier, snackbarHostState, onFinishOnboarding = {
-            CoroutineScope(Dispatchers.IO).launch {
-                appState.onboardingDismissed()
-            }
-        })
+        OnboardingScreen(modifier, snackbarHostState)
     }
 
     AnimatedVisibility(onboardingState.value == OnboardingState.HideOnboarding) {
