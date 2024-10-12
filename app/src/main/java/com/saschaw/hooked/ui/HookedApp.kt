@@ -72,9 +72,6 @@ fun HookedApp(
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-@OptIn(
-    ExperimentalMaterial3Api::class,
-)
 internal fun HookedApp(
     appState: HookedAppState,
     snackbarHostState: SnackbarHostState,
@@ -121,41 +118,16 @@ internal fun HookedApp(
             },
             windowAdaptiveInfo = windowAdaptiveInfo,
         ) {
-            Scaffold(
-                modifier = modifier,
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.onBackground,
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-                snackbarHost = { SnackbarHost(snackbarHostState) },
-                topBar = {
-                    TopAppBar(
-                        title = { TitleWithLogo() },
-                    )
-                }
-            ) { padding ->
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                        .consumeWindowInsets(padding)
-                        .windowInsetsPadding(
-                            WindowInsets.safeDrawing.only(
-                                WindowInsetsSides.Horizontal,
-                            ),
-                        ),
-                ) {
-                    HookedNavHost(
-                        appState = appState,
-                        onShowSnackbar = { message, action ->
-                            snackbarHostState.showSnackbar(
-                                message = message,
-                                actionLabel = action,
-                                duration = Short,
-                            ) == ActionPerformed
-                        },
-                    )
-                }
-            }
+            HookedNavHost(
+                appState = appState,
+                onShowSnackbar = { message, action ->
+                    snackbarHostState.showSnackbar(
+                        message = message,
+                        actionLabel = action,
+                        duration = Short,
+                    ) == ActionPerformed
+                },
+            )
         }
     }
 }
