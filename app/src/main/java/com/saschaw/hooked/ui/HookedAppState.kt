@@ -5,13 +5,11 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavDestination
-import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
-import com.saschaw.hooked.core.authentication.AuthenticationManager
 import com.saschaw.hooked.core.datastore.PreferencesDataSource
 import com.saschaw.hooked.feature.search.navigation.navigateToSearch
 import com.saschaw.hooked.feature.favorites.navigation.navigateToFavorites
@@ -24,7 +22,6 @@ import kotlinx.coroutines.flow.combine
 
 @Composable
 fun rememberHookedAppState(
-    authenticationManager: AuthenticationManager,
     preferences: PreferencesDataSource,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     navController: NavHostController = rememberNavController(),
@@ -35,19 +32,15 @@ fun rememberHookedAppState(
         coroutineScope,
     ) {
         HookedAppState(
-            authenticationManager = authenticationManager,
             preferences = preferences,
             navController = navController,
-            coroutineScope = coroutineScope,
         )
     }
 
 @Stable
 class HookedAppState(
-    val authenticationManager: AuthenticationManager,
     val preferences: PreferencesDataSource,
     val navController: NavHostController,
-    coroutineScope: CoroutineScope,
 ) {
     val currentDestination: NavDestination?
         @Composable get() =
@@ -55,13 +48,6 @@ class HookedAppState(
                 .currentBackStackEntryAsState()
                 .value
                 ?.destination
-
-    val currentTopLevelDestination: TopLevelDestination?
-        @Composable get() {
-            return TopLevelDestination.entries.firstOrNull { destination ->
-                this.currentDestination?.hasRoute(route = destination.route) ?: false
-            }
-        }
 
     /**
      * Map of top level destinations to be used in the TopBar, BottomBar and NavRail. The key is the
@@ -99,15 +85,6 @@ class HookedAppState(
             }
 
         }
-
-    suspend fun onboardingDismissed() {
-        preferences.updateAppUserData(hasSeenOnboarding = true)
-    }
-
-    // TODO: bad
-    fun getMyAuthenticationManager(): AuthenticationManager {
-        return authenticationManager
-    }
 }
 
 sealed class OnboardingState {
