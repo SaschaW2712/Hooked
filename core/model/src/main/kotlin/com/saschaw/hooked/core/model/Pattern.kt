@@ -5,24 +5,19 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Pattern(
-    val designer: PatternAuthor,
+    val designer: PatternAuthor? = null,
     val id: Int,
     val name: String,
-    @SerialName("pattern_author") val patternAuthor: PatternAuthor,
-    @SerialName("pattern_sources") val patternSources: List<PatternSource>,
+    @SerialName("first_photo") val firstPhoto: RavelryPhoto? = null,
+    @SerialName("pattern_author") val patternAuthor: PatternAuthor? = null,
+    @SerialName("pattern_sources") val patternSources: List<PatternSource>? = emptyList(),
     val permalink: String
 )
 
-@Serializable
-data class PatternAuthor(
-    val id: Int,
-    val name: String,
-    val permalink: String,
-)
 
 @Serializable
 data class PatternSource(
-    val author: String,
+    val author: String? = null,
     val id: Int,
     val name: String,
     val permalink: String

@@ -36,6 +36,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.saschaw.hooked.core.authentication.AuthenticationManager
+import com.saschaw.hooked.core.designsystem.components.TitleWithLogo
 import com.saschaw.hooked.core.designsystem.navigation.HookedNavigationSuiteScaffold
 import com.saschaw.hooked.feature.onboarding.OnboardingScreen
 import com.saschaw.hooked.navigation.HookedNavHost
@@ -63,7 +64,6 @@ fun HookedApp(
                 snackbarHostState = snackbarHostState,
                 modifier = modifier,
                 windowAdaptiveInfo = windowAdaptiveInfo,
-                authenticationManager = appState.getMyAuthenticationManager()
             )
         }
     }
@@ -71,26 +71,18 @@ fun HookedApp(
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-@OptIn(
-    ExperimentalMaterial3Api::class,
-)
 internal fun HookedApp(
     appState: HookedAppState,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
-    authenticationManager: AuthenticationManager,
 ) {
     val currentDestination = appState.currentDestination
 
     val onboardingState = appState.getOnboardingState().collectAsStateWithLifecycle(OnboardingState.ShowOnboarding())
 
     AnimatedVisibility(onboardingState.value != OnboardingState.HideOnboarding) {
-        OnboardingScreen(modifier, snackbarHostState, authenticationManager) {
-            CoroutineScope(Dispatchers.IO).launch {
-                appState.onboardingDismissed()
-            }
-        }
+        OnboardingScreen(modifier, snackbarHostState)
     }
 
     AnimatedVisibility(onboardingState.value == OnboardingState.HideOnboarding) {
@@ -120,41 +112,16 @@ internal fun HookedApp(
             },
             windowAdaptiveInfo = windowAdaptiveInfo,
         ) {
-            Scaffold(
-                modifier = modifier,
-                containerColor = Color.Transparent,
-                contentColor = MaterialTheme.colorScheme.onBackground,
-                contentWindowInsets = WindowInsets(0, 0, 0, 0),
-                snackbarHost = { SnackbarHost(snackbarHostState) },
-                topBar = {
-                    TopAppBar(
-                        title = { Text("Hooked") },
-                    )
-                }
-            ) { padding ->
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                        .consumeWindowInsets(padding)
-                        .windowInsetsPadding(
-                            WindowInsets.safeDrawing.only(
-                                WindowInsetsSides.Horizontal,
-                            ),
-                        ),
-                ) {
-                    HookedNavHost(
-                        appState = appState,
-                        onShowSnackbar = { message, action ->
-                            snackbarHostState.showSnackbar(
-                                message = message,
-                                actionLabel = action,
-                                duration = Short,
-                            ) == ActionPerformed
-                        },
-                    )
-                }
-            }
+            HookedNavHost(
+                appState = appState,
+                onShowSnackbar = { message, action ->
+                    snackbarHostState.showSnackbar(
+                        message = message,
+                        actionLabel = action,
+                        duration = Short,
+                    ) == ActionPerformed
+                },
+            )
         }
     }
 }

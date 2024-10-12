@@ -1,9 +1,13 @@
 package com.saschaw.hooked.feature.favorites
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saschaw.hooked.core.data.repository.RavelryUserDataRepository
 import com.saschaw.hooked.core.model.FavoritesListPaginated
+import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Error
+import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Loading
+import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,18 +19,24 @@ import javax.inject.Inject
 class FavoritesScreenViewModel @Inject constructor(
     private val ravelryUserDataRepository: RavelryUserDataRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<FavoritesScreenUiState>(FavoritesScreenUiState.Loading)
+    private val _uiState = MutableStateFlow<FavoritesScreenUiState>(Loading)
     val uiState: StateFlow<FavoritesScreenUiState> = _uiState.asStateFlow()
 
     init {
+        refreshFavorites()
+    }
+
+    fun refreshFavorites() {
+        _uiState.value = Loading
+
         viewModelScope.launch {
             try {
                 val favorites = ravelryUserDataRepository.fetchFavoritesList()
-                val username = ravelryUserDataRepository.fetchCurrentUsername()
 
-                _uiState.value = FavoritesScreenUiState.Success(favorites, username)
+                _uiState.value = if (favorites != null) Success(favorites) else Error
             } catch (e: Exception) {
-                _uiState.value = FavoritesScreenUiState.Error(e)
+                Log.e("FavoritesScreenVM", "Couldn't load favorites", e)
+                _uiState.value = Error
             }
         }
     }
@@ -34,6 +44,6 @@ class FavoritesScreenViewModel @Inject constructor(
 
 sealed interface FavoritesScreenUiState {
     data object Loading : FavoritesScreenUiState
-    data class Success(val favorites: FavoritesListPaginated?, val username: String?) : FavoritesScreenUiState
-    data class Error(val exception: Exception) : FavoritesScreenUiState
+    data class Success(val favorites: FavoritesListPaginated) : FavoritesScreenUiState
+    data object Error : FavoritesScreenUiState
 }

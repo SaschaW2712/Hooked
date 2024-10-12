@@ -27,7 +27,8 @@ interface RetrofitHookedRavelryApi {
     suspend fun getFavoritesList(
         @Path("username") username: String,
         @Header("Authorization") accessToken: String,
-        @Query("types") types: Array<String>
+        @Query("types") types: Array<String>,
+        @Query("page_size") pageSize: Int
     ): FavoritesListPaginated?
 
     @GET(value = "/current_user.json")
@@ -65,7 +66,7 @@ internal class RetrofitHookedNetwork @Inject constructor(
 
         authenticationManager.doAuthenticated(
             function = { accessToken, _ ->
-                accessToken?.let {
+                accessToken?.let { token ->
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             // For now, we only want pattern favorites
@@ -75,9 +76,10 @@ internal class RetrofitHookedNetwork @Inject constructor(
 
                             username?.let {
                                 val response = networkApi.getFavoritesList(
-                                    it,
-                                    getAuthHeaderValue(it),
-                                    types
+                                    username = it,
+                                    accessToken = getAuthHeaderValue(token),
+                                    pageSize = 100,
+                                    types = types
                                 )
                                 deferred.complete(response)
                             }
