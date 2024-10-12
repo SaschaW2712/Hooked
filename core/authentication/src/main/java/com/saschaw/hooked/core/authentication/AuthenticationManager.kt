@@ -155,6 +155,7 @@ class RavelryAuthenticationManager @Inject constructor() : AuthenticationManager
     override fun doAuthenticated(function: (String?, String?) -> Unit, onFailure: (Exception) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
             refreshTokensIfNeededBlocking()
+
             preferences.getAuthState().firstOrNull().let {
 
                 // Ensure we're authenticated
@@ -173,7 +174,6 @@ class RavelryAuthenticationManager @Inject constructor() : AuthenticationManager
                         function(accessToken, idToken)
                     }
                 } else {
-                    // Occurs when auth state hasn't been initialised yet
                     onFailure(Exception("No auth state found"))
                 }
             }
