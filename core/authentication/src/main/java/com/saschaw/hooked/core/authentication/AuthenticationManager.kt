@@ -63,6 +63,34 @@ class RavelryAuthenticationManager @Inject constructor() : AuthenticationManager
         )
     }
 
+    private fun buildAuthRequest(): AuthorizationRequest {
+        val authState = AuthState(
+            AuthorizationServiceConfiguration(
+                Uri.parse(AuthConfig.AUTH_URI),
+                Uri.parse(AuthConfig.TOKEN_URI)
+            )
+        )
+
+        CoroutineScope(Dispatchers.IO).launch {
+            preferences.updateAuthState(authState)
+        }
+
+        val authRequestBuilder = AuthorizationRequest.Builder(
+            authState.authorizationServiceConfiguration
+                ?: AuthorizationServiceConfiguration(
+                    Uri.parse(AuthConfig.AUTH_URI),
+                    Uri.parse(AuthConfig.TOKEN_URI),
+                ),
+            clientId,
+            ResponseTypeValues.CODE,
+            Uri.parse(appCallbackUri)
+        )
+
+        authRequestBuilder.setScope(AuthConfig.SCOPES)
+
+        return authRequestBuilder.build()
+    }
+
     override fun onAuthorizationResult(result: ActivityResult) {
         result.data?.let { data ->
             val exception = AuthorizationException.fromIntent(data)
@@ -100,34 +128,6 @@ class RavelryAuthenticationManager @Inject constructor() : AuthenticationManager
                 }
             }
         }
-    }
-
-    private fun buildAuthRequest(): AuthorizationRequest {
-        val authState = AuthState(
-            AuthorizationServiceConfiguration(
-                Uri.parse(AuthConfig.AUTH_URI),
-                Uri.parse(AuthConfig.TOKEN_URI)
-            )
-        )
-
-        CoroutineScope(Dispatchers.IO).launch {
-            preferences.updateAuthState(authState)
-        }
-
-        val authRequestBuilder = AuthorizationRequest.Builder(
-            authState.authorizationServiceConfiguration
-                ?: AuthorizationServiceConfiguration(
-                    Uri.parse(AuthConfig.AUTH_URI),
-                    Uri.parse(AuthConfig.TOKEN_URI),
-                ),
-            clientId,
-            ResponseTypeValues.CODE,
-            Uri.parse(appCallbackUri)
-        )
-
-        authRequestBuilder.setScope(AuthConfig.SCOPES)
-
-        return authRequestBuilder.build()
     }
 
     private fun performTokenRequest(

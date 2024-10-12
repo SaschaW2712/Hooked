@@ -65,7 +65,7 @@ internal class RetrofitHookedNetwork @Inject constructor(
 
         authenticationManager.doAuthenticated(
             function = { accessToken, _ ->
-                accessToken?.let {
+                accessToken?.let { token ->
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
                             // For now, we only want pattern favorites
@@ -76,7 +76,7 @@ internal class RetrofitHookedNetwork @Inject constructor(
                             username?.let {
                                 val response = networkApi.getFavoritesList(
                                     it,
-                                    getAuthHeaderValue(it),
+                                    getAuthHeaderValue(token),
                                     types
                                 )
                                 deferred.complete(response)

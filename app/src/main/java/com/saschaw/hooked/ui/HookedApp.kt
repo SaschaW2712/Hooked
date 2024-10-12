@@ -36,6 +36,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import com.saschaw.hooked.core.authentication.AuthenticationManager
+import com.saschaw.hooked.core.designsystem.components.TitleWithLogo
 import com.saschaw.hooked.core.designsystem.navigation.HookedNavigationSuiteScaffold
 import com.saschaw.hooked.feature.onboarding.OnboardingScreen
 import com.saschaw.hooked.navigation.HookedNavHost
@@ -128,7 +129,7 @@ internal fun HookedApp(
                 snackbarHost = { SnackbarHost(snackbarHostState) },
                 topBar = {
                     TopAppBar(
-                        title = { Text("Hooked") },
+                        title = { TitleWithLogo() },
                     )
                 }
             ) { padding ->
