@@ -129,7 +129,6 @@ internal class RetrofitHookedNetwork @Inject constructor(
         return try {
             deferred.await()
         } catch (e: Exception) {
-            // Should this invalidate authentication if it fails?
             Log.e("Network", "Error getting username", e)
             if (e is HttpException && e.code() == 403) {
                 authenticationManager.invalidateAuthentication()
