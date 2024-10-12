@@ -4,7 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.saschaw.hooked.R
 import com.saschaw.hooked.core.designsystem.HookedIcons
-import com.saschaw.hooked.feature.browse.navigation.BrowseRoute
+import com.saschaw.hooked.feature.search.navigation.SearchRoute
 import com.saschaw.hooked.feature.favorites.navigation.FavoritesRoute
 import kotlin.reflect.KClass
 
@@ -15,12 +15,12 @@ enum class TopLevelDestination(
     @StringRes val titleTextId: Int,
     val route: KClass<*>,
 ) {
-    BROWSE(
-        selectedIcon = HookedIcons.Browse,
-        unselectedIcon = HookedIcons.BrowseOutlined,
-        iconTextId = R.string.browse_icon_desc,
-        titleTextId = R.string.browse_label,
-        route = BrowseRoute::class,
+    SEARCH(
+        selectedIcon = HookedIcons.Search,
+        unselectedIcon = HookedIcons.SearchOutlined,
+        iconTextId = R.string.search_icon_desc,
+        titleTextId = R.string.search_label,
+        route = SearchRoute::class,
     ),
     FAVORITES(
         selectedIcon = HookedIcons.Favorite,

@@ -66,7 +66,7 @@ dependencies {
     implementation(libs.auth0.android.jwtDecode)
     implementation(libs.openId.appAuth)
 
-    implementation(project(":feature:browse"))
+    implementation(project(":feature:search"))
     implementation(project(":feature:favorites"))
 
     implementation(libs.androidx.compose.material3.adaptive.layout)

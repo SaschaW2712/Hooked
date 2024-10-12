@@ -40,11 +40,11 @@ fun HookedNavigationBarPreview() {
     val items = listOf("For you", "Saved", "Interests")
     val icons =
         listOf(
-            HookedIcons.BrowseOutlined,
+            HookedIcons.SearchOutlined,
         )
     val selectedIcons =
         listOf(
-            HookedIcons.Browse,
+            HookedIcons.Search,
         )
 
     HookedTheme {

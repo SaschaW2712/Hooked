@@ -1,11 +1,10 @@
-package com.saschaw.hooked.feature.browse
+package com.saschaw.hooked.feature.search
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,8 +17,8 @@ import com.saschaw.hooked.core.designsystem.theme.HookedTheme
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun BrowseScreen(
-    viewModel: BrowseScreenViewModel = hiltViewModel(),
+fun SearchScreen(
+    viewModel: SearchScreenViewModel = hiltViewModel(),
 ) {
     val state = rememberScrollState()
 
@@ -27,19 +26,19 @@ fun BrowseScreen(
         modifier = Modifier
             .padding(horizontal = 36.dp, vertical = 36.dp)
             .verticalScroll(state),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Authenticated & seen onboarding!")
+        Text("Search page WIP")
     }
 }
 
 @Preview
 @Composable
-private fun BrowseScreenPreview() {
+private fun SearchScreenPreview() {
     HookedTheme {
         Surface {
-            BrowseScreen()
+            SearchScreen()
         }
     }
 }

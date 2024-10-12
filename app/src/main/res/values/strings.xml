@@ -2,8 +2,8 @@
     <string name="app_name">Hooked</string>
     <string name="action_settings">Settings</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="browse_icon_desc">Browse</string>
-    <string name="browse_label">Browse</string>
+    <string name="search_icon_desc">Search</string>
+    <string name="search_label">Search</string>
     <string name="favorites_icon_desc">Favorites</string>
     <string name="favorites_label">Favorites</string>
 
