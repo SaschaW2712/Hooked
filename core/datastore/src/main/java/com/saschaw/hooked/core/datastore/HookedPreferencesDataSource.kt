@@ -25,10 +25,10 @@ interface PreferencesDataSource {
     fun getAuthState(): Flow<AuthState?>
     suspend fun updateAuthState(authState: AuthState?)
 
-    suspend fun updateAppUserData(hasSeenOnboarding: Boolean? = null, ravelryUser: RavelryUser? = null)
+    suspend fun updateAppUserData(hasSeenOnboarding: Boolean? = null, username: String? = null)
 
     fun getHasSeenOnboarding(): Flow<Boolean>
-    fun getRavelryUser(): Flow<RavelryUser?>
+    fun getRavelryUsername(): Flow<String?>
 }
 
 class HookedPreferencesDataSource @Inject constructor(
@@ -42,7 +42,7 @@ class HookedPreferencesDataSource @Inject constructor(
     override suspend fun initUserData() {
         preferences.edit {
             if (it[userDataKey] == null) {
-                it[userDataKey] = Json.encodeToString(HookedAppUserData(false, null))
+                it[userDataKey] = Json.encodeToString(HookedAppUserData(false, ""))
             }
         }
     }
@@ -62,20 +62,23 @@ class HookedPreferencesDataSource @Inject constructor(
         }
     }
 
-
     override suspend fun updateAuthState(authState: AuthState?) {
         preferences.edit { mutablePrefs ->
             val newValue = authState?.jsonSerializeString() ?: ""
 
             mutablePrefs[authStateKey] = newValue
         }
+
+        if (authState == null) {
+            updateAppUserData(username = null)
+        }
     }
 
     override fun getHasSeenOnboarding(): Flow<Boolean> =
         getAppUserData().map { it?.hasSeenOnboarding ?: false }
 
-    override fun getRavelryUser(): Flow<RavelryUser?> =
-        getAppUserData().map { it?.ravelryUser }
+    override fun getRavelryUsername(): Flow<String?> =
+        getAppUserData().map { it?.username }
 
 
     private fun getAppUserData() = preferences.data.map { preferences ->
@@ -91,7 +94,7 @@ class HookedPreferencesDataSource @Inject constructor(
 
     override suspend fun updateAppUserData(
         hasSeenOnboarding: Boolean?,
-        ravelryUser: RavelryUser?
+        username: String?
     ) {
         try {
             preferences.edit { mutablePrefs ->
@@ -101,7 +104,11 @@ class HookedPreferencesDataSource @Inject constructor(
                 userData?.let {
                     val newData = it.copy(
                         hasSeenOnboarding = hasSeenOnboarding ?: userData.hasSeenOnboarding,
-                        ravelryUser = ravelryUser ?: userData.ravelryUser
+                        username = when {
+                            username != null -> username
+                            !it.username.isNullOrEmpty() -> it.username
+                            else -> ""
+                        }
                     )
 
                     mutablePrefs[userDataKey] = Json.encodeToString(newData)
