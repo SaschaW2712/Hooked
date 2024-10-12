@@ -64,7 +64,7 @@ fun FavoritesScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar({ Text("Favorites") }, actions = {
+            TopAppBar({ Text(stringResource(R.string.favorites_feature_name)) }, actions = {
                 IconButton(onClick = onRefresh) {
                     Icon(
                         Icons.Rounded.Refresh,
@@ -87,7 +87,7 @@ fun FavoritesScreen(
             exit = exitAnimation
         ) {
             Box(contentModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
         }
 
