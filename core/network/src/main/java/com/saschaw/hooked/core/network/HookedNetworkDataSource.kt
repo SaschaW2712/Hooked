@@ -4,6 +4,6 @@ import com.saschaw.hooked.core.model.FavoritesListPaginated
 import com.saschaw.hooked.core.model.RavelryUser
 
 interface HookedNetworkDataSource {
-     suspend fun getFavoritesList(): FavoritesListPaginated
-     suspend fun getCurrentUser(): RavelryUser
+     suspend fun fetchFavoritesList(): FavoritesListPaginated?
+     suspend fun fetchCurrentUsername(): String?
 }

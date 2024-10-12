@@ -21,8 +21,9 @@ class FavoritesScreenViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             try {
-                val favorites = ravelryUserDataRepository.getFavoritesList()
-                val username = ravelryUserDataRepository.getCurrentUser().username
+                val favorites = ravelryUserDataRepository.fetchFavoritesList()
+                val username = ravelryUserDataRepository.fetchCurrentUsername()
+
                 _uiState.value = FavoritesScreenUiState.Success(favorites, username)
             } catch (e: Exception) {
                 _uiState.value = FavoritesScreenUiState.Error(e)
@@ -33,6 +34,6 @@ class FavoritesScreenViewModel @Inject constructor(
 
 sealed interface FavoritesScreenUiState {
     data object Loading : FavoritesScreenUiState
-    data class Success(val favorites: FavoritesListPaginated, val username: String) : FavoritesScreenUiState
+    data class Success(val favorites: FavoritesListPaginated?, val username: String?) : FavoritesScreenUiState
     data class Error(val exception: Exception) : FavoritesScreenUiState
 }
