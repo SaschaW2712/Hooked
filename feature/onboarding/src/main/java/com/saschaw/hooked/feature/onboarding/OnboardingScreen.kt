@@ -45,14 +45,14 @@ import com.saschaw.hooked.core.designsystem.theme.HookedTheme
 fun OnboardingScreen(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState,
-    authenticationManager: AuthenticationManager,
     onFinishOnboarding: () -> Unit,
+    viewModel: OnboardingScreenViewModel = hiltViewModel()
 ) {
     val state = rememberScrollState()
 
     val authLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            authenticationManager.onAuthorizationResult(it)
+            viewModel.authenticationManager.onAuthorizationResult(it)
             onFinishOnboarding()
         }
 
@@ -89,7 +89,7 @@ fun OnboardingScreen(
 
             HookedButton(
                 onClick = {
-                    authLauncher.launch(authenticationManager.getAuthorizationIntent())
+                    authLauncher.launch(viewModel.authenticationManager.getAuthorizationIntent())
                 },
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
                 style = HookedButtonStyle.Primary,

@@ -21,9 +21,6 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var preferences: PreferencesDataSource
 
-    @Inject
-    lateinit var authenticationManager: AuthenticationManager
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -36,7 +33,7 @@ class MainActivity : ComponentActivity() {
 
             enableEdgeToEdge()
 
-            val appState = rememberHookedAppState(authenticationManager, preferences)
+            val appState = rememberHookedAppState(preferences)
 
             HookedTheme {
                 HookedApp(appState)

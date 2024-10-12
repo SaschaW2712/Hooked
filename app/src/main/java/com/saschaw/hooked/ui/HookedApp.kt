@@ -64,7 +64,6 @@ fun HookedApp(
                 snackbarHostState = snackbarHostState,
                 modifier = modifier,
                 windowAdaptiveInfo = windowAdaptiveInfo,
-                authenticationManager = appState.getMyAuthenticationManager()
             )
         }
     }
@@ -77,18 +76,17 @@ internal fun HookedApp(
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     windowAdaptiveInfo: WindowAdaptiveInfo = currentWindowAdaptiveInfo(),
-    authenticationManager: AuthenticationManager,
 ) {
     val currentDestination = appState.currentDestination
 
     val onboardingState = appState.getOnboardingState().collectAsStateWithLifecycle(OnboardingState.ShowOnboarding())
 
     AnimatedVisibility(onboardingState.value != OnboardingState.HideOnboarding) {
-        OnboardingScreen(modifier, snackbarHostState, authenticationManager) {
+        OnboardingScreen(modifier, snackbarHostState, onFinishOnboarding = {
             CoroutineScope(Dispatchers.IO).launch {
                 appState.onboardingDismissed()
             }
-        }
+        })
     }
 
     AnimatedVisibility(onboardingState.value == OnboardingState.HideOnboarding) {
