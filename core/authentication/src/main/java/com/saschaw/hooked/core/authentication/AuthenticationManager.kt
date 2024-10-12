@@ -25,7 +25,7 @@ import javax.inject.Inject
 interface AuthenticationManager {
     fun getAuthorizationIntent(): Intent
     fun onAuthorizationResult(result: ActivityResult)
-    fun doAuthenticated(function: (String?, String?) -> Unit, onError: (Exception) -> Unit)
+    fun doAuthenticated(function: (String?, String?) -> Unit, onFailure: (Exception) -> Unit)
     suspend fun refreshTokensIfNeededBlocking()
     fun invalidateAuthentication()
 }
@@ -152,35 +152,31 @@ class RavelryAuthenticationManager @Inject constructor() : AuthenticationManager
         }
     }
 
-    override fun doAuthenticated(function: (String?, String?) -> Unit, onError: (Exception) -> Unit) {
+    override fun doAuthenticated(function: (String?, String?) -> Unit, onFailure: (Exception) -> Unit) {
         CoroutineScope(Dispatchers.IO).launch {
-            try {
-                refreshTokensIfNeededBlocking()
-                preferences.getAuthState().firstOrNull().let {
-                    if (it != null) {
-                        it.performActionWithFreshTokens(authService) { accessToken, idToken, ex ->
-                            ex?.let {
-                                // Usually occurs as a result of expired refresh token,
-                                // so need to trigger full re-authentication
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    clearAuthState()
-                                    onError(ex)
-                                }
-                                return@performActionWithFreshTokens
+            refreshTokensIfNeededBlocking()
+            preferences.getAuthState().firstOrNull().let {
+
+                // Ensure we're authenticated
+                if (it != null) {
+                    it.performActionWithFreshTokens(authService) { accessToken, idToken, ex ->
+                        ex?.let {
+                            // Usually occurs as a result of expired refresh token,
+                            // so need to trigger full re-authentication
+                            CoroutineScope(Dispatchers.IO).launch {
+                                clearAuthState()
+                                onFailure(ex)
                             }
-
-                            function(accessToken, idToken)
+                            return@performActionWithFreshTokens
                         }
-                    } else {
-                        // Occurs when auth state hasn't been initialised yet
-                        onError(Exception("No auth state found"))
-                    }
-                }
-            } catch (ex: Exception) {
-                // User needs to authenticate again and their auth state has been cleared, don't continue.
-                onError(ex)
-            }
 
+                        function(accessToken, idToken)
+                    }
+                } else {
+                    // Occurs when auth state hasn't been initialised yet
+                    onFailure(Exception("No auth state found"))
+                }
+            }
         }
     }
 
@@ -220,25 +216,25 @@ class RavelryAuthenticationManager @Inject constructor() : AuthenticationManager
     }
 
     override suspend fun refreshTokensIfNeededBlocking() {
-        preferences.getAuthState().collect {
+        val authState = preferences.getAuthState().firstOrNull()
 
-            if (it == null) {
-                // Need to fully re-authenticate
+        if (authState == null || authState.refreshToken == null) {
+            // No refresh token will be available, do not continue.
+            return
+        } else if (authState.needsTokenRefresh) {
+            try {
+                performTokenRequest(
+                    authService,
+                    clientAuthentication,
+                    authState.createTokenRefreshRequest()
+                )
+            } catch (ex: Exception) {
+                // Occurs when token request fails, usually an IllegalStateException because refresh token has expired
                 clearAuthState()
-            } else if (it.needsTokenRefresh) {
-                try {
-                    performTokenRequest(
-                        authService,
-                        clientAuthentication,
-                        it.createTokenRefreshRequest()
-                    )
-                } catch (ex: Exception) {
-                    // Occurs when token request fails, usually an IllegalStateException because refresh token has expired
-                    clearAuthState()
-                }
             }
         }
     }
+
 
     override fun invalidateAuthentication() {
         CoroutineScope(Dispatchers.IO).launch {

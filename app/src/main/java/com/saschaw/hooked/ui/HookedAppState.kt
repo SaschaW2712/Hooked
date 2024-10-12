@@ -86,19 +86,18 @@ class HookedAppState(
     }
 
     fun getOnboardingState(): Flow<OnboardingState> =
-        preferences.getHasSeenOnboarding().combine(preferences.getAuthState()) { userData, authState ->
-            userData.let {
-                return@let when {
-                    !it -> OnboardingState.ShowOnboarding()
-                    authState == null || !authState.isAuthorized -> {
-                        val loggedOutMessage =
-                            "You have been logged out. Please connect your account again to continue."
-                        return@combine OnboardingState.ShowOnboarding(loggedOutMessage)
-                    }
-
-                    else -> OnboardingState.HideOnboarding
+        preferences.getHasSeenOnboarding().combine(preferences.getAuthState()) { hasSeenOnboarding, authState ->
+            return@combine when {
+                !hasSeenOnboarding -> OnboardingState.ShowOnboarding()
+                authState == null || !authState.isAuthorized || authState.refreshToken == null -> {
+                    val loggedOutMessage =
+                        "You have been logged out. Please connect your account again to continue."
+                    OnboardingState.ShowOnboarding(loggedOutMessage)
                 }
+
+                else -> OnboardingState.HideOnboarding
             }
+
         }
 
     suspend fun onboardingDismissed() {

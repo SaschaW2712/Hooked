@@ -8,9 +8,11 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.GET
@@ -36,7 +38,7 @@ interface RetrofitHookedRavelryApi {
 
 @Serializable
 data class CurrentUserResponse(
-    val ravelryUser: RavelryUser
+    @SerialName("user") val ravelryUser: RavelryUser
 )
 
 @Singleton
@@ -69,7 +71,9 @@ internal class RetrofitHookedNetwork @Inject constructor(
                             // For now, we only want pattern favorites
                             val types = arrayOf("pattern")
 
-                            lastFetchedUsername?.let {
+                            val username = lastFetchedUsername ?: fetchCurrentUsername()
+
+                            username?.let {
                                 val response = networkApi.getFavoritesList(
                                     it,
                                     getAuthHeaderValue(it),
@@ -77,13 +81,14 @@ internal class RetrofitHookedNetwork @Inject constructor(
                                 )
                                 deferred.complete(response)
                             }
+
                         } catch (e: Exception) {
                             deferred.completeExceptionally(e)
                         }
                     }
                 }
             },
-            onError = {
+            onFailure = {
                 deferred.completeExceptionally(it)
             }
         )
@@ -92,6 +97,9 @@ internal class RetrofitHookedNetwork @Inject constructor(
             return deferred.await()
         } catch (e: Exception) {
             Log.e("Network", "Error getting favorites list", e)
+            if (e is HttpException && e.code() == 403) {
+                authenticationManager.invalidateAuthentication()
+            }
             return null
         }
     }
@@ -113,16 +121,19 @@ internal class RetrofitHookedNetwork @Inject constructor(
                     }
                 }
             },
-            onError = {
+            onFailure = {
                 deferred.completeExceptionally(it)
             }
         )
 
         return try {
             deferred.await()
-        } catch (ex: Exception) {
+        } catch (e: Exception) {
             // Should this invalidate authentication if it fails?
-    //            authenticationManager.invalidateAuthentication()
+            Log.e("Network", "Error getting username", e)
+            if (e is HttpException && e.code() == 403) {
+                authenticationManager.invalidateAuthentication()
+            }
             null
         }
     }
