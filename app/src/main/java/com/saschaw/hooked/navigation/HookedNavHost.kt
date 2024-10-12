@@ -3,7 +3,7 @@ package com.saschaw.hooked.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
-import com.saschaw.hooked.feature.browse.navigation.browseScreen
+import com.saschaw.hooked.feature.search.navigation.searchScreen
 import com.saschaw.hooked.feature.favorites.navigation.FavoritesRoute
 import com.saschaw.hooked.feature.favorites.navigation.favoritesScreen
 import com.saschaw.hooked.ui.HookedAppState
@@ -28,7 +28,7 @@ fun HookedNavHost(
         startDestination = FavoritesRoute,
         modifier = modifier,
     ) {
-        browseScreen()
+        searchScreen()
 
         favoritesScreen()
     }

@@ -114,7 +114,7 @@ fun OnboardingScreen(
 
 @Preview
 @Composable
-private fun BrowseScreenPreview() {
+private fun OnboardingScreenPreview() {
     HookedTheme {
         Surface {
 //            OnboardingScreen(snackbarHostState = remember { SnackbarHostState() }) {}
