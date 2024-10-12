@@ -8,17 +8,12 @@ data class Pattern(
     val designer: PatternAuthor? = null,
     val id: Int,
     val name: String,
+    @SerialName("first_photo") val firstPhoto: RavelryPhoto? = null,
     @SerialName("pattern_author") val patternAuthor: PatternAuthor? = null,
     @SerialName("pattern_sources") val patternSources: List<PatternSource>? = emptyList(),
     val permalink: String
 )
 
-@Serializable
-data class PatternAuthor(
-    val id: Int,
-    val name: String,
-    val permalink: String,
-)
 
 @Serializable
 data class PatternSource(

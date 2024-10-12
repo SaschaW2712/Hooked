@@ -3,4 +3,5 @@
     <string name="error_title">Uh oh, we\'ve been unraveled!</string>
     <string name="error_body">Please try refreshing or restart your app.</string>
     <string name="error_button_text">Try again</string>
+    <string name="refresh_button_content_desc">Refresh</string>
 </resources>

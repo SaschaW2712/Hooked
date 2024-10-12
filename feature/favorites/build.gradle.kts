@@ -26,6 +26,8 @@ dependencies {
     implementation(project(":core:model"))
     testImplementation(libs.androidx.junit)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network)
 
     ksp(libs.dagger.hilt.compiler)
 

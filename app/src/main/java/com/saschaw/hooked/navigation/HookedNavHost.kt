@@ -26,7 +26,7 @@ fun HookedNavHost(
     val navController = appState.navController
     NavHost(
         navController = navController,
-        startDestination = BrowseRoute,
+        startDestination = FavoritesRoute,
         modifier = modifier,
     ) {
         browseScreen()

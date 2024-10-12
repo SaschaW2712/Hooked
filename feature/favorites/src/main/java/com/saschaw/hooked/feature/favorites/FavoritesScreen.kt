@@ -5,7 +5,7 @@ import HookedButtonStyle
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,15 +36,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.saschaw.hooked.core.model.FavoritesListItem
 import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Error
 import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Loading
 import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Success
+import com.saschaw.hooked.core.designsystem.R as designR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("ktlint:standard:function-naming")
@@ -60,7 +66,12 @@ fun FavoritesScreen(
         topBar = {
             TopAppBar({ Text("Favorites") }, actions = {
                 IconButton(onClick = onRefresh) {
-                    Icon(Icons.Rounded.Refresh, contentDescription = "Refresh")
+                    Icon(
+                        Icons.Rounded.Refresh,
+                        modifier = Modifier.size(28.dp),
+                        tint = MaterialTheme.colorScheme.onSurface,
+                        contentDescription = stringResource(R.string.refresh_button_content_desc)
+                    )
                 }
             })
         }
@@ -76,7 +87,7 @@ fun FavoritesScreen(
             exit = exitAnimation
         ) {
             Box(contentModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.onSurface)
             }
         }
 
@@ -136,7 +147,7 @@ fun FavoritesScreenSuccessContent(
         verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        items(currentPageFavorites) {
+        items(currentPageFavorites) { pattern ->
             Card(
                 onClick = {},
                 modifier = Modifier
@@ -145,32 +156,47 @@ fun FavoritesScreenSuccessContent(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer
                 ),
             ) {
+                val context = LocalContext.current
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    // TODO: Replace with real images
-                    Image(
-                        painter = painterResource(id = com.saschaw.hooked.core.designsystem.R.drawable.app_logo),
-                        modifier = Modifier.fillMaxWidth(),
-                        contentDescription = null
+
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(pattern.firstPhoto?.mediumUrl)
+                            .crossfade(true)
+                            .build(),
+                        fallback = painterResource(designR.drawable.app_logo),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .height(200.dp),
+                        contentScale = ContentScale.FillWidth,
+                        contentDescription = null,
                     )
 
                     Column(
                         Modifier
-                            .padding(12.dp)
-                            .fillMaxWidth()) {
+                            .padding(horizontal = 12.dp, vertical = 8.dp)
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceContainer)
+                    ) {
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            // TODO: Replace with real images
-                            Image(
-                                painter = painterResource(com.saschaw.hooked.core.designsystem.R.drawable.app_logo),
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(pattern.patternAuthor?.users?.firstOrNull()?.photoUrl)
+                                    .crossfade(true)
+                                    .build(),
+                                fallback = painterResource(designR.drawable.app_logo),
                                 modifier = Modifier
-                                    .padding(top = 2.dp)
+                                    .padding(top = 4.dp)
                                     .size(40.dp)
                                     .clip(CircleShape),
-                                contentDescription = null
+                                contentScale = ContentScale.FillBounds,
+                                contentDescription = "Author profile image"
                             )
-                            Column {
-                                Text(it.name, style = MaterialTheme.typography.titleMedium)
 
-                                it.patternAuthor?.name?.let { authorName ->
+                            Column {
+                                Text(pattern.name, style = MaterialTheme.typography.titleMedium)
+
+                                pattern.patternAuthor?.name?.let { authorName ->
                                     Text(authorName, style = MaterialTheme.typography.bodySmall)
                                 }
                             }
