@@ -157,8 +157,8 @@ fun FavoritesScreenSuccessContent(
                 ),
             ) {
                 val context = LocalContext.current
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     AsyncImage(
                         model = ImageRequest.Builder(context)
                             .data(pattern.firstPhoto?.mediumUrl)
