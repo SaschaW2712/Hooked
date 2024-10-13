@@ -38,7 +38,7 @@ class SearchScreenViewModel @Inject constructor(
                         Error
                     }
             } catch (e: Exception) {
-                Log.e("FavoritesScreenVM", "Couldn't load favorites", e)
+                Log.e("SearchScreenViewModel", "Couldn't load search results", e)
                 _uiState.value = Error
             }
         }
