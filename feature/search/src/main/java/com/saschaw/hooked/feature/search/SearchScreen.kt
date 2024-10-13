@@ -32,12 +32,15 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -66,11 +69,14 @@ fun SearchScreen(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
+    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val searchInput = remember { mutableStateOf("") }
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(Modifier.padding(bottom = 12.dp)) {
-                TopAppBar({ Text("Search") })
+                TopAppBar({ Text("Search") }, scrollBehavior = scrollBehavior)
 
                 SearchInput(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp),
@@ -80,7 +86,6 @@ fun SearchScreen(
                 )
             }
         }
-
     ) { padding ->
         val contentModifier = Modifier.padding(padding)
 
