@@ -1,5 +1,9 @@
 package com.saschaw.hooked.core.designsystem.navigation
 
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.only
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationDrawerItemDefaults
 import androidx.compose.material3.NavigationRailItemDefaults
@@ -35,24 +39,21 @@ fun HookedNavigationSuiteScaffold(
             .calculateFromAdaptiveInfo(windowAdaptiveInfo)
     val navigationSuiteItemColors =
         NavigationSuiteItemColors(
-            navigationBarItemColors =
-                NavigationBarItemDefaults.colors(
+            navigationBarItemColors = NavigationBarItemDefaults.colors(
                     selectedIconColor = HookedNavigationDefaults.navigationSelectedItemColor(),
                     unselectedIconColor = HookedNavigationDefaults.navigationContentColor(),
                     selectedTextColor = HookedNavigationDefaults.navigationSelectedItemColor(),
                     unselectedTextColor = HookedNavigationDefaults.navigationContentColor(),
                     indicatorColor = HookedNavigationDefaults.navigationIndicatorColor(),
                 ),
-            navigationRailItemColors =
-                NavigationRailItemDefaults.colors(
+            navigationRailItemColors = NavigationRailItemDefaults.colors(
                     selectedIconColor = HookedNavigationDefaults.navigationSelectedItemColor(),
                     unselectedIconColor = HookedNavigationDefaults.navigationContentColor(),
                     selectedTextColor = HookedNavigationDefaults.navigationSelectedItemColor(),
                     unselectedTextColor = HookedNavigationDefaults.navigationContentColor(),
                     indicatorColor = HookedNavigationDefaults.navigationIndicatorColor(),
                 ),
-            navigationDrawerItemColors =
-                NavigationDrawerItemDefaults.colors(
+            navigationDrawerItemColors = NavigationDrawerItemDefaults.colors(
                     selectedIconColor = HookedNavigationDefaults.navigationSelectedItemColor(),
                     unselectedIconColor = HookedNavigationDefaults.navigationContentColor(),
                     selectedTextColor = HookedNavigationDefaults.navigationSelectedItemColor(),
@@ -69,12 +70,13 @@ fun HookedNavigationSuiteScaffold(
         },
         layoutType = layoutType,
         containerColor = Color.Transparent,
-        navigationSuiteColors =
-            NavigationSuiteDefaults.colors(
+        navigationSuiteColors = NavigationSuiteDefaults.colors(
                 navigationBarContentColor = HookedNavigationDefaults.navigationContentColor(),
                 navigationRailContainerColor = Color.Transparent,
             ),
-        modifier = modifier,
+        modifier = Modifier.consumeWindowInsets(
+            NavigationBarDefaults.windowInsets.only(WindowInsetsSides.Bottom)
+        )
     ) {
         content()
     }

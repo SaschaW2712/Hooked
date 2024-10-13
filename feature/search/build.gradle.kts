@@ -24,7 +24,11 @@ dependencies {
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.ui.tooling.preview.android)
+    implementation(project(":core:data"))
+    implementation(project(":core:model"))
     ksp(libs.dagger.hilt.compiler)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network)
 
     testImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.junit)

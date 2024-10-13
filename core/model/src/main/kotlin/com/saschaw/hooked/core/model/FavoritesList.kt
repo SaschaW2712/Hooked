@@ -16,5 +16,5 @@ data class FavoritesListItem(
     val id: Int,
     @SerialName("tag_list") val tagList: String,
     val type: String,
-    val favorited: Pattern,
+    val favorited: PatternListItem,
 )
