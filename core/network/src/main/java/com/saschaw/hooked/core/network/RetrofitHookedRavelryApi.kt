@@ -36,6 +36,7 @@ interface RetrofitHookedRavelryApi {
 
     @GET(value = "/patterns/search.json")
     suspend fun search(
+        @Header("Authorization") accessToken: String,
         @Query("query") searchQuery: String,
     ): SearchResultsPaginated
 
@@ -107,7 +108,7 @@ internal class RetrofitHookedNetwork @Inject constructor(
             return deferred.await()
         } catch (e: Exception) {
             Log.e("Network", "Error getting favorites list", e)
-            if (e is HttpException && e.code() == 403) {
+            if (e is HttpException && (e.code() == 403 || e.code() == 401)) {
                 authenticationManager.invalidateAuthentication()
             }
             return null
@@ -115,10 +116,33 @@ internal class RetrofitHookedNetwork @Inject constructor(
     }
 
     override suspend fun search(query: String): SearchResultsPaginated? {
+        val deferred = CompletableDeferred<SearchResultsPaginated?>()
+
+        authenticationManager.doAuthenticated(
+            function = { accessToken, _ ->
+                accessToken?.let { token ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val response = networkApi.search(getAuthHeaderValue(token), query)
+                            deferred.complete(response)
+                        } catch (e: Exception) {
+                            deferred.completeExceptionally(e)
+                        }
+                    }
+                }
+            },
+            onFailure = {
+                deferred.completeExceptionally(it)
+            }
+        )
+
         return try {
-            networkApi.search(query)
+            deferred.await()
         } catch (e: Exception) {
             Log.e("Network", "Error getting search results", e)
+            if (e is HttpException && (e.code() == 403 || e.code() == 401)) {
+                authenticationManager.invalidateAuthentication()
+            }
             null
         }
     }
@@ -149,7 +173,7 @@ internal class RetrofitHookedNetwork @Inject constructor(
             deferred.await()
         } catch (e: Exception) {
             Log.e("Network", "Error getting username", e)
-            if (e is HttpException && e.code() == 403) {
+            if (e is HttpException && (e.code() == 403 || e.code() == 401)) {
                 authenticationManager.invalidateAuthentication()
             }
             null

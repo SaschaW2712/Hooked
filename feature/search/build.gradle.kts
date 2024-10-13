@@ -24,6 +24,8 @@ dependencies {
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.ui.tooling.preview.android)
+    implementation(project(":core:data"))
+    implementation(project(":core:model"))
     ksp(libs.dagger.hilt.compiler)
 
     testImplementation(libs.androidx.junit)
