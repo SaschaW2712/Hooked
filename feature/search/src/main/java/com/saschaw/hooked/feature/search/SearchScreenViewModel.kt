@@ -4,8 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saschaw.hooked.core.data.repository.RavelrySearchRepository
-import com.saschaw.hooked.core.model.SearchResultsPaginated
-import com.saschaw.hooked.feature.search.SearchScreenUiState.Idle
+import com.saschaw.hooked.core.model.SearchWithResults
 import com.saschaw.hooked.feature.search.SearchScreenUiState.Loading
 import com.saschaw.hooked.feature.search.SearchScreenUiState.Error
 import com.saschaw.hooked.feature.search.SearchScreenUiState.Success
@@ -21,7 +20,7 @@ import javax.inject.Inject
 class SearchScreenViewModel @Inject constructor(
     private val ravelrySearchRepository: RavelrySearchRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<SearchScreenUiState>(Idle)
+    private val _uiState = MutableStateFlow<SearchScreenUiState>(Loading)
     val uiState: StateFlow<SearchScreenUiState> = _uiState.asStateFlow()
 
     fun onSearch(query: String) {
@@ -33,7 +32,27 @@ class SearchScreenViewModel @Inject constructor(
 
                 _uiState.value =
                     if (searchResults != null && searchResults.patterns.isNotEmpty()) {
-                        Success(searchResults)
+                        Success(SearchWithResults(query, searchResults))
+                    } else {
+                        Error
+                    }
+            } catch (e: Exception) {
+                Log.e("SearchScreenViewModel", "Couldn't load search results", e)
+                _uiState.value = Error
+            }
+        }
+    }
+
+    fun getHotRightNow() {
+        _uiState.value = Loading
+
+        viewModelScope.launch {
+            try {
+                val searchResults = ravelrySearchRepository.getHotRightNow()
+
+                _uiState.value =
+                    if (searchResults != null && searchResults.patterns.isNotEmpty()) {
+                        Success(SearchWithResults(null, searchResults))
                     } else {
                         Error
                     }
@@ -46,8 +65,7 @@ class SearchScreenViewModel @Inject constructor(
 }
 
 sealed interface SearchScreenUiState {
-    data object Idle: SearchScreenUiState
     data object Loading : SearchScreenUiState
-    data class Success(val results: SearchResultsPaginated) : SearchScreenUiState
+    data class Success(val searchWithResults: SearchWithResults) : SearchScreenUiState
     data object Error : SearchScreenUiState
 }

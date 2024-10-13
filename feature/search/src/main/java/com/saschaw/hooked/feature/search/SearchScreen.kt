@@ -35,6 +35,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -72,17 +73,21 @@ fun SearchScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
     val searchInput = remember { mutableStateOf("") }
 
+    LaunchedEffect(Unit) { viewModel.getHotRightNow() }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(Modifier.padding(bottom = 12.dp)) {
-                TopAppBar({ Text("Search") }, scrollBehavior = scrollBehavior)
+                TopAppBar({ Text("Search", style = MaterialTheme.typography.headlineMedium) }, scrollBehavior = scrollBehavior)
 
                 SearchInput(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp),
                     value = searchInput.value,
                     onValueChanged = { searchInput.value = it },
-                    onSearch = { viewModel.onSearch(it) }
+                    onSearch = {
+                        viewModel.onSearch(it)
+                    }
                 )
             }
         }
@@ -115,11 +120,14 @@ fun SearchScreen(
             enter = enterAnimation,
             exit = exitAnimation
         ) {
-            val patterns = (uiState as? Success)?.results?.patterns
+
+            val patterns = (uiState as? Success)?.searchWithResults?.results?.patterns
+            val lastSearchQuery = (uiState as? Success)?.searchWithResults?.query
 
             // Empty list case is impossible in practice unless actively transitioning
             SearchScreenSuccessContent(
                 contentModifier,
+                lastSearchQuery,
                 patterns ?: emptyList()
             )
         }
@@ -184,14 +192,27 @@ fun SearchScreenErrorContent(
 @Composable
 fun SearchScreenSuccessContent(
     modifier: Modifier = Modifier,
+    searchQuery: String?,
     patterns: List<PatternListItem>,
 ) {
     LazyColumn(
         modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        item {
+            Text(
+                text = if (searchQuery.isNullOrEmpty()) {
+                    stringResource(R.string.hot_right_now_label)
+                } else {
+                    stringResource(R.string.results_for_query_label, searchQuery)
+                },
+                modifier = Modifier.fillMaxWidth(),
+                style = MaterialTheme.typography.titleMedium
+            )
+        }
+
         items(patterns) { pattern ->
             Card(
                 onClick = {},
@@ -212,7 +233,7 @@ fun SearchScreenSuccessContent(
                         fallback = painterResource(com.saschaw.hooked.core.designsystem.R.drawable.app_logo),
                         modifier = Modifier
                             .fillMaxSize()
-                            .height(200.dp),
+                            .height(250.dp),
                         contentScale = ContentScale.FillWidth,
                         contentDescription = null,
                     )

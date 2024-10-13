@@ -6,6 +6,7 @@ import javax.inject.Inject
 
 interface RavelrySearchRepository {
     suspend fun search(query: String): SearchResultsPaginated?
+    suspend fun getHotRightNow(): SearchResultsPaginated?
 }
 
 internal class RavelrySearchRepositoryImpl @Inject constructor(
@@ -13,5 +14,10 @@ internal class RavelrySearchRepositoryImpl @Inject constructor(
 ): RavelrySearchRepository {
     override suspend fun search(query: String): SearchResultsPaginated? {
         return network.search(query)
+    }
+
+    override suspend fun getHotRightNow(): SearchResultsPaginated? {
+        // Searching with an empty query returns all patterns, ordered by current popularity
+        return network.search("")
     }
 }

@@ -63,7 +63,7 @@ fun FavoritesScreen(
 
     Scaffold(
         topBar = {
-            TopAppBar({ Text(stringResource(R.string.favorites_feature_name)) }, actions = {
+            TopAppBar({ Text(stringResource(R.string.favorites_feature_name), style = MaterialTheme.typography.headlineMedium) }, actions = {
                 IconButton(onClick = { viewModel.refreshFavorites() }) {
                     Icon(
                         Icons.Rounded.Refresh,
@@ -163,7 +163,7 @@ fun FavoritesScreenSuccessContent(
                         fallback = painterResource(designR.drawable.app_logo),
                         modifier = Modifier
                             .fillMaxSize()
-                            .height(200.dp),
+                            .height(250.dp),
                         contentScale = ContentScale.FillWidth,
                         contentDescription = null,
                     )

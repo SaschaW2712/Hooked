@@ -2,4 +2,6 @@
 <resources>
     <string name="error_title">Uh oh, we\'ve been unraveled!</string>
     <string name="error_body">Please try again in a moment or restart your app.</string>
+    <string name="hot_right_now_label">Hot right now</string>
+    <string name="results_for_query_label">Results for \"%1$s\"</string>
 </resources>
