@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="error_title">Uh oh, we\'ve been unraveled!</string>
+    <string name="error_body">Please try again in a moment or restart your app.</string>
+</resources>

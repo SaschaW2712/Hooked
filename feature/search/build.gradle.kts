@@ -27,6 +27,8 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:model"))
     ksp(libs.dagger.hilt.compiler)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network)
 
     testImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.junit)

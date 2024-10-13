@@ -40,6 +40,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,12 +61,10 @@ fun FavoritesScreen(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
-    val onRefresh = { viewModel.refreshFavorites() }
-
     Scaffold(
         topBar = {
             TopAppBar({ Text(stringResource(R.string.favorites_feature_name)) }, actions = {
-                IconButton(onClick = onRefresh) {
+                IconButton(onClick = { viewModel.refreshFavorites() }) {
                     Icon(
                         Icons.Rounded.Refresh,
                         modifier = Modifier.size(28.dp),
@@ -96,7 +95,7 @@ fun FavoritesScreen(
             enter = enterAnimation,
             exit = exitAnimation
         ) {
-            FavoritesScreenErrorContent(contentModifier, onRefresh)
+            FavoritesScreenErrorContent(contentModifier)
         }
 
         AnimatedVisibility(
@@ -118,21 +117,18 @@ fun FavoritesScreen(
 @Composable
 fun FavoritesScreenErrorContent(
     modifier: Modifier = Modifier,
-    onRefresh: () -> Unit
 ) {
-    Column(modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-        Text(stringResource(R.string.error_title), style = MaterialTheme.typography.titleLarge)
-        Text(stringResource(R.string.error_body))
-
-        Spacer(Modifier.height(16.dp))
-
-        HookedButton(
-            onClick = onRefresh,
-            style = HookedButtonStyle.Primary,
-            text = { Text(stringResource(R.string.error_button_text), style = MaterialTheme.typography.bodyLarge) }
-        )
+    Column(
+        modifier
+            .fillMaxSize()
+            .padding(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(stringResource(R.string.error_title), style = MaterialTheme.typography.titleLarge, textAlign = Center)
+        Spacer(Modifier.height(8.dp))
+        Text(stringResource(R.string.error_body), textAlign = Center)
     }
-
 }
 
 @Composable
@@ -143,7 +139,7 @@ fun FavoritesScreenSuccessContent(
     val currentPageFavorites = favoritesList.map { it.favorited }
     LazyColumn(
         modifier,
-        contentPadding = PaddingValues(horizontal = 32.dp, vertical = 12.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -176,7 +172,6 @@ fun FavoritesScreenSuccessContent(
                         Modifier
                             .padding(horizontal = 12.dp, vertical = 8.dp)
                             .fillMaxWidth()
-                            .background(MaterialTheme.colorScheme.surfaceContainer)
                     ) {
                         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             AsyncImage(
