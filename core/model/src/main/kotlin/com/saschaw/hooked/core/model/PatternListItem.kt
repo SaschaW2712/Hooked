@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Pattern(
+data class PatternListItem(
     val designer: PatternAuthor? = null,
     val id: Int,
     val name: String,

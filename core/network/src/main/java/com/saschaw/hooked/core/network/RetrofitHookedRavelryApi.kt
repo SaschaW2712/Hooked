@@ -3,7 +3,10 @@ package com.saschaw.hooked.core.network
 import android.util.Log
 import com.saschaw.hooked.core.authentication.AuthenticationManager
 import com.saschaw.hooked.core.model.FavoritesListPaginated
+import com.saschaw.hooked.core.model.Paginator
+import com.saschaw.hooked.core.model.PatternListItem
 import com.saschaw.hooked.core.model.RavelryUser
+import com.saschaw.hooked.core.model.SearchResultsPaginated
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,6 +33,11 @@ interface RetrofitHookedRavelryApi {
         @Query("types") types: Array<String>,
         @Query("page_size") pageSize: Int
     ): FavoritesListPaginated?
+
+    @GET(value = "/patterns/search.json")
+    suspend fun search(
+        @Query("query") searchQuery: String,
+    ): SearchResultsPaginated
 
     @GET(value = "/current_user.json")
     suspend fun getCurrentUser(
@@ -106,6 +114,15 @@ internal class RetrofitHookedNetwork @Inject constructor(
         }
     }
 
+    override suspend fun search(query: String): SearchResultsPaginated? {
+        return try {
+            networkApi.search(query)
+        } catch (e: Exception) {
+            Log.e("Network", "Error getting search results", e)
+            null
+        }
+    }
+
     override suspend fun fetchCurrentUsername(): String? {
         val deferred = CompletableDeferred<String>()
 
@@ -141,4 +158,3 @@ internal class RetrofitHookedNetwork @Inject constructor(
 
     private fun getAuthHeaderValue(accessToken: String): String = "Bearer $accessToken"
 }
-
