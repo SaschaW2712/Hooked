@@ -11,10 +11,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
 import com.saschaw.hooked.core.datastore.PreferencesDataSource
-import com.saschaw.hooked.feature.search.navigation.navigateToSearch
+import com.saschaw.hooked.feature.discover.navigation.navigateToDiscover
 import com.saschaw.hooked.feature.favorites.navigation.navigateToFavorites
 import com.saschaw.hooked.navigation.TopLevelDestination
-import com.saschaw.hooked.navigation.TopLevelDestination.SEARCH
+import com.saschaw.hooked.navigation.TopLevelDestination.DISCOVER
 import com.saschaw.hooked.navigation.TopLevelDestination.FAVORITES
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
@@ -66,7 +66,7 @@ class HookedAppState(
             }
 
         when (destination) {
-            SEARCH -> navController.navigateToSearch(options)
+            DISCOVER -> navController.navigateToDiscover(options)
             FAVORITES -> navController.navigateToFavorites(options)
         }
     }
