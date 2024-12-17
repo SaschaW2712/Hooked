@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_logo_desc">Hooked app logo, a ball of yarn with a crochet hook placed in front of it.</string>
+    <string name="author_profile_image_desc">Author profile image</string>
 </resources>

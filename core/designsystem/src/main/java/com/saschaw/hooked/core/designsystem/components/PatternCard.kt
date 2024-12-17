@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -73,7 +74,7 @@ fun PatternCard(
                             .size(40.dp)
                             .clip(CircleShape),
                         contentScale = ContentScale.FillBounds,
-                        contentDescription = "Author profile image"
+                        contentDescription = stringResource(R.string.author_profile_image_desc)
                     )
 
                     Column {
