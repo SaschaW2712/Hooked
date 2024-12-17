@@ -5,4 +5,5 @@
     <string name="error_button_text">Try again</string>
     <string name="refresh_button_content_desc">Refresh</string>
     <string name="favorites_feature_name">Favorites</string>
+    <string name="ravelry_pattern_base_url">https://www.ravelry.com/patterns/library/%1$s</string>
 </resources>
