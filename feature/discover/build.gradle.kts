@@ -8,7 +8,7 @@ plugins {
 }
 
 android {
-    namespace = "com.saschaw.hooked.feature.search"
+    namespace = "com.saschaw.hooked.feature.discover"
     compileSdk = 34
 }
 

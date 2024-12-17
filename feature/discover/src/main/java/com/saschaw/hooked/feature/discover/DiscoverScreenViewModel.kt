@@ -1,13 +1,13 @@
-package com.saschaw.hooked.feature.search
+package com.saschaw.hooked.feature.discover
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saschaw.hooked.core.data.repository.RavelrySearchRepository
 import com.saschaw.hooked.core.model.SearchWithResults
-import com.saschaw.hooked.feature.search.SearchScreenUiState.Loading
-import com.saschaw.hooked.feature.search.SearchScreenUiState.Error
-import com.saschaw.hooked.feature.search.SearchScreenUiState.Success
+import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Loading
+import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Error
+import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Success
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,11 +17,11 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class SearchScreenViewModel @Inject constructor(
+class DiscoverScreenViewModel @Inject constructor(
     private val ravelrySearchRepository: RavelrySearchRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<SearchScreenUiState>(Loading)
-    val uiState: StateFlow<SearchScreenUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<DiscoverScreenUiState>(Loading)
+    val uiState: StateFlow<DiscoverScreenUiState> = _uiState.asStateFlow()
 
     fun onSearch(query: String) {
         _uiState.value = Loading
@@ -64,8 +64,8 @@ class SearchScreenViewModel @Inject constructor(
     }
 }
 
-sealed interface SearchScreenUiState {
-    data object Loading : SearchScreenUiState
-    data class Success(val searchWithResults: SearchWithResults) : SearchScreenUiState
-    data object Error : SearchScreenUiState
+sealed interface DiscoverScreenUiState {
+    data object Loading : DiscoverScreenUiState
+    data class Success(val searchWithResults: SearchWithResults) : DiscoverScreenUiState
+    data object Error : DiscoverScreenUiState
 }

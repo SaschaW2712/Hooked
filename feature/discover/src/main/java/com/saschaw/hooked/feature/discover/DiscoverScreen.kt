@@ -1,4 +1,4 @@
-package com.saschaw.hooked.feature.search
+package com.saschaw.hooked.feature.discover
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -59,14 +59,14 @@ import coil3.request.crossfade
 import com.saschaw.hooked.core.designsystem.HookedIcons
 import com.saschaw.hooked.core.designsystem.theme.HookedTheme
 import com.saschaw.hooked.core.model.PatternListItem
-import com.saschaw.hooked.feature.search.SearchScreenUiState.Error
-import com.saschaw.hooked.feature.search.SearchScreenUiState.Success
+import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Error
+import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Success
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun SearchScreen(
-    viewModel: SearchScreenViewModel = hiltViewModel(),
+fun DiscoverScreen(
+    viewModel: DiscoverScreenViewModel = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
@@ -79,7 +79,15 @@ fun SearchScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             Column(Modifier.padding(bottom = 12.dp)) {
-                TopAppBar({ Text("Search", style = MaterialTheme.typography.headlineMedium) }, scrollBehavior = scrollBehavior)
+                TopAppBar(
+                    title = {
+                        Text(
+                            stringResource(R.string.discover_feature_title),
+                            style = MaterialTheme.typography.headlineMedium
+                        )
+                    },
+                    scrollBehavior = scrollBehavior
+                )
 
                 SearchInput(
                     modifier = Modifier.padding(start = 16.dp, end = 16.dp),
@@ -98,7 +106,7 @@ fun SearchScreen(
         val exitAnimation = fadeOut()
 
         AnimatedVisibility(
-            visible = uiState == SearchScreenUiState.Loading,
+            visible = uiState == DiscoverScreenUiState.Loading,
             enter = enterAnimation,
             exit = exitAnimation
         ) {
@@ -112,7 +120,7 @@ fun SearchScreen(
             enter = enterAnimation,
             exit = exitAnimation
         ) {
-            SearchScreenErrorContent(contentModifier)
+            DiscoverScreenErrorContent(contentModifier)
         }
 
         AnimatedVisibility(
@@ -125,7 +133,7 @@ fun SearchScreen(
             val lastSearchQuery = (uiState as? Success)?.searchWithResults?.query
 
             // Empty list case is impossible in practice unless actively transitioning
-            SearchScreenSuccessContent(
+            DiscoverScreenSuccessContent(
                 contentModifier,
                 lastSearchQuery,
                 patterns ?: emptyList()
@@ -173,7 +181,7 @@ fun SearchInput(
 }
 
 @Composable
-fun SearchScreenErrorContent(
+fun DiscoverScreenErrorContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -190,7 +198,7 @@ fun SearchScreenErrorContent(
 }
 
 @Composable
-fun SearchScreenSuccessContent(
+fun DiscoverScreenSuccessContent(
     modifier: Modifier = Modifier,
     searchQuery: String?,
     patterns: List<PatternListItem>,
@@ -275,10 +283,10 @@ fun SearchScreenSuccessContent(
 
 @Preview
 @Composable
-private fun SearchScreenPreview() {
+private fun DiscoverScreenPreview() {
     HookedTheme {
         Surface {
-            SearchScreen()
+            DiscoverScreen()
         }
     }
 }
