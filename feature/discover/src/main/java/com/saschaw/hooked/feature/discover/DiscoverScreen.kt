@@ -7,21 +7,16 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -40,12 +35,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
@@ -53,10 +46,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.saschaw.hooked.core.designsystem.HookedIcons
+import com.saschaw.hooked.core.designsystem.components.PatternCard
 import com.saschaw.hooked.core.designsystem.theme.HookedTheme
 import com.saschaw.hooked.core.model.PatternListItem
 import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Error
@@ -203,6 +194,9 @@ fun DiscoverScreenSuccessContent(
     searchQuery: String?,
     patterns: List<PatternListItem>,
 ) {
+    val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
+
     LazyColumn(
         modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
@@ -222,61 +216,13 @@ fun DiscoverScreenSuccessContent(
         }
 
         items(patterns) { pattern ->
-            Card(
-                onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                ),
-            ) {
-                val context = LocalContext.current
-
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    AsyncImage(
-                        model = ImageRequest.Builder(context)
-                            .data(pattern.firstPhoto?.mediumUrl)
-                            .crossfade(true)
-                            .build(),
-                        fallback = painterResource(com.saschaw.hooked.core.designsystem.R.drawable.app_logo),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .height(250.dp),
-                        contentScale = ContentScale.FillWidth,
-                        contentDescription = null,
-                    )
-
-                    Column(
-                        Modifier
-                            .padding(horizontal = 12.dp, vertical = 8.dp)
-                            .fillMaxWidth()
-                    ) {
-                        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            AsyncImage(
-                                model = ImageRequest.Builder(context)
-                                    .data(pattern.patternAuthor?.users?.firstOrNull()?.photoUrl)
-                                    .crossfade(true)
-                                    .build(),
-                                fallback = painterResource(com.saschaw.hooked.core.designsystem.R.drawable.app_logo),
-                                modifier = Modifier
-                                    .padding(top = 4.dp)
-                                    .size(40.dp)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.FillBounds,
-                                contentDescription = "Author profile image"
-                            )
-
-                            Column {
-                                Text(pattern.name, style = MaterialTheme.typography.titleMedium)
-
-                                pattern.patternAuthor?.name?.let { authorName ->
-                                    Text(authorName, style = MaterialTheme.typography.bodySmall)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            PatternCard(Modifier.fillMaxWidth(), pattern = pattern, onClick = {
+                uriHandler.openUri(
+                    context.getString(
+                        R.string.ravelry_pattern_base_url,
+                        pattern.permalink
+                    ))
+            })
         }
     }
 }
