@@ -136,6 +136,7 @@ fun FavoritesScreenSuccessContent(
     ) {
         items(currentPageFavorites) { pattern ->
             PatternCard(Modifier.fillMaxWidth(), pattern = pattern, onClick = {
+                // TODO HKD-30: Open pattern details natively
                 uriHandler.openUri(
                     context.getString(
                         R.string.ravelry_pattern_base_url,

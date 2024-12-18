@@ -5,18 +5,12 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.saschaw.hooked.feature.discover.navigation.DiscoverRoute
 import com.saschaw.hooked.feature.discover.navigation.discoverScreen
-import com.saschaw.hooked.feature.favorites.navigation.FavoritesRoute
 import com.saschaw.hooked.feature.favorites.navigation.favoritesScreen
+import com.saschaw.hooked.feature.patterndetails.navigation.navigateToPatternDetails
+import com.saschaw.hooked.feature.patterndetails.navigation.patternDetailsScreen
 import com.saschaw.hooked.ui.HookedAppState
 
 @Suppress("ktlint:standard:function-naming")
-/**
- * Top-level navigation graph. Navigation is organized as explained at
- * https://d.android.com/jetpack/compose/nav-adaptive
- *
- * The navigation graph defined in this file defines the different top level routes. Navigation
- * within each route is handled using state and Back Handlers.
- */
 @Composable
 fun HookedNavHost(
     appState: HookedAppState,
@@ -29,7 +23,12 @@ fun HookedNavHost(
         startDestination = DiscoverRoute,
         modifier = modifier,
     ) {
-        discoverScreen()
+        discoverScreen(onPatternClick = navController::navigateToPatternDetails)
+
+        // TODO HKD-30: Fix blank screen behind bottomsheet
+        patternDetailsScreen {
+            navController.popBackStack()
+        }
 
         favoritesScreen()
     }
