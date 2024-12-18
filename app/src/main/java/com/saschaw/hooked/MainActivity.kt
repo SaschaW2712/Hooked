@@ -48,6 +48,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroid_Preview() {
-    // TODO: Figure out how to spoof preferences
     HookedApp(rememberHookedAppState(HookedPreferencesDataSource(LocalContext.current)))
 }
