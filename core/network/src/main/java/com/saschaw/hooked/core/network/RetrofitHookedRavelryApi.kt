@@ -2,9 +2,9 @@ package com.saschaw.hooked.core.network
 
 import android.util.Log
 import com.saschaw.hooked.core.authentication.AuthenticationManager
+import com.saschaw.hooked.core.model.Bookmark
+import com.saschaw.hooked.core.model.CreateBookmark
 import com.saschaw.hooked.core.model.FavoritesListPaginated
-import com.saschaw.hooked.core.model.Paginator
-import com.saschaw.hooked.core.model.PatternListItem
 import com.saschaw.hooked.core.model.RavelryUser
 import com.saschaw.hooked.core.model.SearchResultsPaginated
 import kotlinx.coroutines.CompletableDeferred
@@ -18,8 +18,10 @@ import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import javax.inject.Inject
@@ -44,11 +46,23 @@ interface RetrofitHookedRavelryApi {
     suspend fun getCurrentUser(
         @Header("Authorization") accessToken: String,
     ): CurrentUserResponse
+
+    @POST(value = "/people/{username}/favorites/create.json")
+    suspend fun saveToFavorites(
+        @Path("username") username: String,
+        @Header("Authorization") accessToken: String,
+        @Body bookmark: CreateBookmark
+    ): SaveToFavoritesResponse
 }
 
 @Serializable
 data class CurrentUserResponse(
     @SerialName("user") val ravelryUser: RavelryUser
+)
+
+@Serializable
+data class SaveToFavoritesResponse(
+    val bookmark: Bookmark,
 )
 
 @Singleton
@@ -158,6 +172,50 @@ internal class RetrofitHookedNetwork @Inject constructor(
                             val response = networkApi.getCurrentUser(getAuthHeaderValue(it))
                             lastFetchedUsername = response.ravelryUser.username
                             deferred.complete(response.ravelryUser.username)
+                        } catch (e: Exception) {
+                            deferred.completeExceptionally(e)
+                        }
+                    }
+                }
+            },
+            onFailure = {
+                deferred.completeExceptionally(it)
+            }
+        )
+
+        return try {
+            deferred.await()
+        } catch (e: Exception) {
+            Log.e("Network", "Error getting username", e)
+            if (e is HttpException && (e.code() == 403 || e.code() == 401)) {
+                authenticationManager.invalidateAuthentication()
+            }
+            null
+        }
+    }
+
+    override suspend fun savePatternToFavorites(id: String): Bookmark? {
+        val deferred = CompletableDeferred<Bookmark>()
+
+        authenticationManager.doAuthenticated(
+            function = { accessToken, _ ->
+                accessToken?.let { token ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val bookmark = CreateBookmark(id, "pattern", "", null)
+
+                            val username = lastFetchedUsername ?: fetchCurrentUsername()
+
+                            username?.let {
+                                val response = networkApi.saveToFavorites(
+                                    username = it,
+                                    accessToken = getAuthHeaderValue(token),
+                                    bookmark = bookmark
+                                )
+
+                                deferred.complete(response.bookmark)
+                            }
+
                         } catch (e: Exception) {
                             deferred.completeExceptionally(e)
                         }
