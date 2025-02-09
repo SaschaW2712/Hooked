@@ -1,23 +1,22 @@
 package com.saschaw.hooked.feature.patterndetails.navigation
 
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.navigation.bottomSheet
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
 import com.saschaw.hooked.feature.patterndetails.PatternDetailsScreen
-import kotlinx.serialization.Serializable
-
-@Serializable data class PatternDetailsRoute(val patternId: Int)
 
 fun NavController.navigateToPatternDetails(
     patternId: Int,
     navOptions: NavOptions? = null
 ) {
-    navigate(route = PatternDetailsRoute(patternId), navOptions)
+    navigate("patternDetails/${patternId}", navOptions)
 }
 
 fun NavGraphBuilder.patternDetailsScreen(onDismiss: () -> Unit) {
-    composable<PatternDetailsRoute> {
+    // The `bottomSheet` extension doesn't yet support serializable routes
+    bottomSheet("patternDetails/{patternId}") { _ ->
         PatternDetailsScreen(onDismiss = onDismiss)
     }
 }

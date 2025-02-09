@@ -29,8 +29,8 @@ fun PatternDetailsScreen(
 
     LaunchedEffect(Unit) { viewModel.onLoadPattern() }
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    val scope = rememberCoroutineScope()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+    rememberCoroutineScope()
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -67,3 +67,4 @@ fun PatternDetailsScreen(
         }
     }
 }
+

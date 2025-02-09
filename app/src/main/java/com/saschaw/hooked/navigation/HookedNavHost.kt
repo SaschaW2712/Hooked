@@ -1,5 +1,7 @@
 package com.saschaw.hooked.navigation
 
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.navigation.ModalBottomSheetLayout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -18,18 +20,17 @@ fun HookedNavHost(
     modifier: Modifier = Modifier,
 ) {
     val navController = appState.navController
-    NavHost(
-        navController = navController,
-        startDestination = DiscoverRoute,
-        modifier = modifier,
-    ) {
-        discoverScreen(onPatternClick = navController::navigateToPatternDetails)
+    ModalBottomSheetLayout(appState.bottomSheetNavigator) {
+        NavHost(
+            navController = navController,
+            startDestination = DiscoverRoute,
+            modifier = modifier,
+        ) {
+            discoverScreen(onPatternClick = navController::navigateToPatternDetails)
 
-        // TODO HKD-30: Fix blank screen behind bottomsheet
-        patternDetailsScreen {
-            navController.popBackStack()
+            patternDetailsScreen(onDismiss = navController::popBackStack)
+
+            favoritesScreen()
         }
-
-        favoritesScreen()
     }
 }

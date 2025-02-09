@@ -4,12 +4,8 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.toRoute
 import com.saschaw.hooked.core.datastore.PreferencesDataSource
-import com.saschaw.hooked.core.model.PatternListItem
-import com.saschaw.hooked.core.model.SearchWithResults
 import com.saschaw.hooked.core.network.HookedNetworkDataSource
-import com.saschaw.hooked.feature.patterndetails.navigation.PatternDetailsRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,9 +19,7 @@ class PatternDetailsScreenViewModel @Inject constructor(
     private val preferences: PreferencesDataSource,
     private val network: HookedNetworkDataSource
 ) : ViewModel() {
-    private val patternDetailsRoute: PatternDetailsRoute = savedStateHandle.toRoute()
-
-    private val selectedPatternId = patternDetailsRoute.patternId
+    private val patternId: Int = savedStateHandle.get<String>("patternId")?.toIntOrNull() ?: -1
 
     private val _uiState = MutableStateFlow<PatternDetailsScreenUiState>(PatternDetailsScreenUiState.Loading)
     val uiState: StateFlow<PatternDetailsScreenUiState> = _uiState.asStateFlow()
