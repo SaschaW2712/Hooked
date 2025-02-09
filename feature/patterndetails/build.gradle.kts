@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.dagger.hilt.android)
     implementation(libs.androidx.navigationCompose)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation(libs.androidx.material.navigation)
     ksp(libs.dagger.hilt.compiler)
     implementation(project(":core:datastore"))
     implementation(project(":core:data"))
