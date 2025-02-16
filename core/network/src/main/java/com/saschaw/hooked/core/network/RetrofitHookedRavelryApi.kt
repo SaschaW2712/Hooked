@@ -20,6 +20,7 @@ import retrofit2.HttpException
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.POST
@@ -59,6 +60,13 @@ interface RetrofitHookedRavelryApi {
         @Path("username") username: String,
         @Header("Authorization") accessToken: String,
         @Body bookmark: CreateBookmark
+    ): SaveToFavoritesResponse
+
+    @DELETE(value = "/people/{username}/favorites/{id}.json")
+    suspend fun deleteFromFavorites(
+        @Path("username") username: String,
+        @Path("id") id: Int,
+        @Header("Authorization") accessToken: String,
     ): SaveToFavoritesResponse
 }
 
@@ -206,7 +214,7 @@ internal class RetrofitHookedNetwork @Inject constructor(
         return resultOrInvalidAuth(deferred)
     }
 
-    override suspend fun savePatternToFavorites(id: String): Bookmark? {
+    override suspend fun savePatternToFavorites(id: Int): Bookmark? {
         val deferred = CompletableDeferred<Bookmark>()
 
         authenticationManager.doAuthenticated(
@@ -214,7 +222,7 @@ internal class RetrofitHookedNetwork @Inject constructor(
                 accessToken?.let { token ->
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
-                            val bookmark = CreateBookmark(id, "pattern", "", null)
+                            val bookmark = CreateBookmark(id.toString(), "pattern", "", null)
 
                             val username = lastFetchedUsername ?: fetchCurrentUsername()
 
@@ -228,6 +236,37 @@ internal class RetrofitHookedNetwork @Inject constructor(
                                 deferred.complete(response.bookmark)
                             }
 
+                        } catch (e: Exception) {
+                            deferred.completeExceptionally(e)
+                        }
+                    }
+                }
+            },
+            onFailure = {
+                deferred.completeExceptionally(it)
+            }
+        )
+
+        return resultOrInvalidAuth(deferred)
+    }
+
+    override suspend fun removePatternFromFavorites(id: Int): Bookmark? {
+        val deferred = CompletableDeferred<Bookmark>()
+
+        authenticationManager.doAuthenticated(
+            function = { accessToken, _ ->
+                accessToken?.let { token ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            lastFetchedUsername ?: fetchCurrentUsername()?.let {
+                                val response = networkApi.deleteFromFavorites(
+                                    username = it,
+                                    id = id,
+                                    accessToken = getAuthHeaderValue(token),
+                                )
+
+                                deferred.complete(response.bookmark)
+                            }
                         } catch (e: Exception) {
                             deferred.completeExceptionally(e)
                         }

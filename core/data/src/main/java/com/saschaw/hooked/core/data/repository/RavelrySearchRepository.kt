@@ -1,6 +1,5 @@
 package com.saschaw.hooked.core.data.repository
 
-import com.saschaw.hooked.core.model.Bookmark
 import com.saschaw.hooked.core.model.lists.search.SearchResultsPaginated
 import com.saschaw.hooked.core.network.HookedNetworkDataSource
 import javax.inject.Inject
@@ -8,7 +7,6 @@ import javax.inject.Inject
 interface RavelrySearchRepository {
     suspend fun search(query: String): SearchResultsPaginated?
     suspend fun getHotRightNow(): SearchResultsPaginated?
-    suspend fun addToFavorites(id: String): Bookmark?
 }
 
 internal class RavelrySearchRepositoryImpl @Inject constructor(
@@ -16,10 +14,6 @@ internal class RavelrySearchRepositoryImpl @Inject constructor(
 ): RavelrySearchRepository {
     override suspend fun search(query: String): SearchResultsPaginated? {
         return network.search(query)
-    }
-
-    override suspend fun addToFavorites(id: String): Bookmark? {
-        return network.savePatternToFavorites(id)
     }
 
     override suspend fun getHotRightNow(): SearchResultsPaginated? {

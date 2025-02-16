@@ -9,5 +9,6 @@ interface HookedNetworkDataSource {
      suspend fun search(query: String): SearchResultsPaginated?
      suspend fun fetchPatternDetails(id: Int): PatternDetailsResponse?
      suspend fun fetchCurrentUsername(): String?
-     suspend fun savePatternToFavorites(id: String): Bookmark?
+     suspend fun savePatternToFavorites(id: Int): Bookmark?
+     suspend fun removePatternFromFavorites(id: Int): Bookmark?
 }
