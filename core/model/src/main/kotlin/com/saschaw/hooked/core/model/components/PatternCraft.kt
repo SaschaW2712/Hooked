@@ -3,7 +3,7 @@ package com.saschaw.hooked.core.model.components
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PatternCraftType(
+data class PatternCraft(
     val id: Int,
     val name: String,
     val permalink: String,

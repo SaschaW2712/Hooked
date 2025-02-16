@@ -4,8 +4,8 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.saschaw.hooked.core.datastore.PreferencesDataSource
-import com.saschaw.hooked.core.network.HookedNetworkDataSource
+import com.saschaw.hooked.core.data.repository.RavelryPatternDetailsRepository
+import com.saschaw.hooked.core.model.pattern.PatternFull
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,9 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PatternDetailsScreenViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
-    private val preferences: PreferencesDataSource,
-    private val network: HookedNetworkDataSource
+    savedStateHandle: SavedStateHandle,
+    private val ravelryPatternDetailsRepository: RavelryPatternDetailsRepository
 ) : ViewModel() {
     private val patternId: Int = savedStateHandle.get<String>("patternId")?.toIntOrNull() ?: -1
 
@@ -29,15 +28,14 @@ class PatternDetailsScreenViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                // TODO HKD-30: Load real details
-//                val pattern =
+                    val result = ravelryPatternDetailsRepository.getPatternDetails(patternId)
 
-//                _uiState.value =
-//                    if (searchResults != null && searchResults.patterns.isNotEmpty()) {
-//                        Success(SearchWithResults(query, searchResults))
-//                    } else {
-//                        Error
-//                    }
+                    _uiState.value =
+                        if (result != null) {
+                            PatternDetailsScreenUiState.Success(result)
+                        } else {
+                            PatternDetailsScreenUiState.Error
+                        }
             } catch (e: Exception) {
                 Log.e("PatternDetailsScreenVM", "Couldn't load pattern details", e)
                 _uiState.value = PatternDetailsScreenUiState.Error
@@ -48,6 +46,6 @@ class PatternDetailsScreenViewModel @Inject constructor(
 
 sealed interface PatternDetailsScreenUiState {
     data object Loading : PatternDetailsScreenUiState
-    data class Success(val patternDetails: String) : PatternDetailsScreenUiState
+    data class Success(val patternDetails: PatternFull) : PatternDetailsScreenUiState
     data object Error : PatternDetailsScreenUiState
 }

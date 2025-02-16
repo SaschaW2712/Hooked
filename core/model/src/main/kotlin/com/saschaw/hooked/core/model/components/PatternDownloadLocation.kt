@@ -7,18 +7,19 @@ import kotlinx.serialization.Serializable
 data class PatternDownloadLocation(
     val url: String,
     val free: Boolean,
-    @SerialName("type") private val typeString: String
+    @SerialName("type") private val typeString: String?
 ) {
     val type: DownloadLocationType
         get() = when (typeString) {
             "ravelry" -> DownloadLocationType.Ravelry
             "external" -> DownloadLocationType.External
-            else -> throw IllegalArgumentException("Unknown download location type: $typeString")
+            else -> DownloadLocationType.Unknown
         }
 }
 
 @Serializable
 enum class DownloadLocationType {
     Ravelry,
-    External
+    External,
+    Unknown
 }

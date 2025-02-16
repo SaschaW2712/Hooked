@@ -1,5 +1,7 @@
 package com.saschaw.hooked.core.data.di
 
+import com.saschaw.hooked.core.data.repository.RavelryPatternDetailsRepository
+import com.saschaw.hooked.core.data.repository.RavelryPatternDetailsRepositoryImpl
 import com.saschaw.hooked.core.data.repository.RavelrySearchRepository
 import com.saschaw.hooked.core.data.repository.RavelrySearchRepositoryImpl
 import com.saschaw.hooked.core.data.repository.RavelryUserDataRepository
@@ -21,4 +23,9 @@ abstract class DataModule {
     internal abstract fun bindsRavelrySearchRepository(
         searchRepository: RavelrySearchRepositoryImpl,
     ): RavelrySearchRepository
+
+    @Binds
+    internal abstract fun bindsRavelryPatternDetailsRepository(
+        searchRepository: RavelryPatternDetailsRepositoryImpl,
+    ): RavelryPatternDetailsRepository
 }
