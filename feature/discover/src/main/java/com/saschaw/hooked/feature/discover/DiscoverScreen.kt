@@ -49,7 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.saschaw.hooked.core.designsystem.HookedIcons
 import com.saschaw.hooked.core.designsystem.components.PatternCard
 import com.saschaw.hooked.core.designsystem.theme.HookedTheme
-import com.saschaw.hooked.core.model.PatternListItem
+import com.saschaw.hooked.core.model.pattern.PatternListItem
 import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Error
 import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Success
 
@@ -120,8 +120,8 @@ fun DiscoverScreen(
             exit = exitAnimation
         ) {
 
-            val patterns = (uiState as? Success)?.searchWithResults?.results?.patterns
-            val lastSearchQuery = (uiState as? Success)?.searchWithResults?.query
+            val patterns = (uiState as? Success)?.searchQueryWithResults?.results?.patterns
+            val lastSearchQuery = (uiState as? Success)?.searchQueryWithResults?.query
 
             // Empty list case is impossible in practice unless actively transitioning
             DiscoverScreenSuccessContent(

@@ -26,7 +26,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.saschaw.hooked.core.designsystem.R
-import com.saschaw.hooked.core.model.PatternListItem
+import com.saschaw.hooked.core.model.pattern.PatternListItem
 
 @Composable
 fun PatternCard(

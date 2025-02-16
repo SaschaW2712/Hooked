@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saschaw.hooked.core.data.repository.RavelryUserDataRepository
-import com.saschaw.hooked.core.model.FavoritesListPaginated
+import com.saschaw.hooked.core.model.lists.favorites.FavoritesListPaginated
 import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Error
 import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Loading
 import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Success

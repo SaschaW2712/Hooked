@@ -1,13 +1,8 @@
-package com.saschaw.hooked.core.model
+package com.saschaw.hooked.core.model.lists.favorites
 
+import com.saschaw.hooked.core.model.pattern.PatternListItem
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
-@Serializable
-data class FavoritesListPaginated(
-    val favorites: List<FavoritesListItem>,
-    val paginator: Paginator
-)
 
 @Serializable
 data class FavoritesListItem(

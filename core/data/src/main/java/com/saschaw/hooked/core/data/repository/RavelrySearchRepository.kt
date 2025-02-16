@@ -1,6 +1,6 @@
 package com.saschaw.hooked.core.data.repository
 
-import com.saschaw.hooked.core.model.SearchResultsPaginated
+import com.saschaw.hooked.core.model.lists.search.SearchResultsPaginated
 import com.saschaw.hooked.core.network.HookedNetworkDataSource
 import javax.inject.Inject
 
