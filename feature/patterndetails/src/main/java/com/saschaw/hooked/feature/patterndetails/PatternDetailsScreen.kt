@@ -81,11 +81,11 @@ fun PatternDetailsScreen(
         ) {
             (uiState as? PatternDetailsScreenUiState.Success)?.patternDetails?.let {
                 PatternDetailsScreenLoaded(
-                    patternPhotoUrl = it.photos.firstOrNull()?.mediumUrl,
-                    authorName = it.patternAuthor.name,
-                    authorPhotoUrl = it.patternAuthor.users.firstOrNull()?.photoUrl,
+                    patternPhotoUrl = it.photos?.firstOrNull()?.mediumUrl,
+                    authorName = it.patternAuthor?.name,
+                    authorPhotoUrl = it.patternAuthor?.users?.firstOrNull()?.photoUrl,
                     title = it.name,
-                    isFavorited = it.personalAttributes.favorited,
+                    isFavorited = it.personalAttributes?.favorited,
                     price = it.displayPrice,
                     onClickLike = { },
                     onClickPatternRavelryLink = { },
@@ -104,10 +104,10 @@ fun PatternDetailsScreen(
 @Composable
 fun PatternDetailsScreenLoaded(
     patternPhotoUrl: String?,
-    authorName: String,
+    authorName: String?,
     authorPhotoUrl: String?,
     title: String,
-    isFavorited: Boolean,
+    isFavorited: Boolean?,
     onClickLike: () -> Unit,
     onClickPatternRavelryLink: () -> Unit,
     price: String,
@@ -140,7 +140,7 @@ fun PatternDetailsScreenLoaded(
                     onClick = onClickLike,
                     colorStyle = ColorStyle.Tertiary,
                 ) {
-                    if (isFavorited) {
+                    if (isFavorited == true) {
                         Icon(HookedIcons.Favorite, contentDescription = "Remove from likes")
                     } else {
                         Icon(HookedIcons.FavoriteOutlined, contentDescription = "Save to likes")
@@ -200,7 +200,7 @@ fun PatternDetailsScreenLoaded(
                 )
 
                 Text(
-                    text = authorName,
+                    text = authorName ?: "",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
