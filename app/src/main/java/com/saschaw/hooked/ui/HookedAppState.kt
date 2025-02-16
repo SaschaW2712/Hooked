@@ -19,27 +19,35 @@ import com.saschaw.hooked.navigation.TopLevelDestination.FAVORITES
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.navigation.BottomSheetNavigator
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.navigation.rememberBottomSheetNavigator
 
 @Composable
 fun rememberHookedAppState(
     preferences: PreferencesDataSource,
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
-    navController: NavHostController = rememberNavController(),
+    bottomSheetNavigator: BottomSheetNavigator = rememberBottomSheetNavigator(),
+    navController: NavHostController = rememberNavController(bottomSheetNavigator),
 ): HookedAppState =
     remember(
         preferences,
+        bottomSheetNavigator,
         navController,
         coroutineScope,
     ) {
         HookedAppState(
             preferences = preferences,
             navController = navController,
+            bottomSheetNavigator = bottomSheetNavigator
         )
     }
 
 @Stable
 class HookedAppState(
     val preferences: PreferencesDataSource,
+    val bottomSheetNavigator: BottomSheetNavigator,
     val navController: NavHostController,
 ) {
     val currentDestination: NavDestination?

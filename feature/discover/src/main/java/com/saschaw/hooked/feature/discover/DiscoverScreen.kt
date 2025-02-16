@@ -58,6 +58,7 @@ import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Success
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverScreenViewModel = hiltViewModel(),
+    onPatternClick: (Int) -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
@@ -127,7 +128,8 @@ fun DiscoverScreen(
             DiscoverScreenSuccessContent(
                 contentModifier,
                 lastSearchQuery,
-                patterns ?: emptyList()
+                patterns ?: emptyList(),
+                onPatternClick,
             )
         }
     }
@@ -193,10 +195,8 @@ fun DiscoverScreenSuccessContent(
     modifier: Modifier = Modifier,
     searchQuery: String?,
     patterns: List<PatternListItem>,
+    onPatternClick: (Int) -> Unit,
 ) {
-    val uriHandler = LocalUriHandler.current
-    val context = LocalContext.current
-
     LazyColumn(
         modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
@@ -217,11 +217,7 @@ fun DiscoverScreenSuccessContent(
 
         items(patterns) { pattern ->
             PatternCard(Modifier.fillMaxWidth(), pattern = pattern, onClick = {
-                uriHandler.openUri(
-                    context.getString(
-                        R.string.ravelry_pattern_base_url,
-                        pattern.permalink
-                    ))
+                onPatternClick(pattern.id)
             })
         }
     }
@@ -232,7 +228,7 @@ fun DiscoverScreenSuccessContent(
 private fun DiscoverScreenPreview() {
     HookedTheme {
         Surface {
-            DiscoverScreen()
+            DiscoverScreen(onPatternClick = {})
         }
     }
 }

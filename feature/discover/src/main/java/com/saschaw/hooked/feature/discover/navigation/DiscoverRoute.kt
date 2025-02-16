@@ -11,8 +11,8 @@ import kotlinx.serialization.Serializable
 
 fun NavController.navigateToDiscover(navOptions: NavOptions) = navigate(route = DiscoverRoute, navOptions)
 
-fun NavGraphBuilder.discoverScreen() {
+fun NavGraphBuilder.discoverScreen(onPatternClick: (Int) -> Unit) {
     composable<DiscoverRoute> {
-        DiscoverScreen()
+        DiscoverScreen(onPatternClick = onPatternClick)
     }
 }

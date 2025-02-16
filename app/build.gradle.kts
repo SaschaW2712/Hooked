@@ -68,6 +68,7 @@ dependencies {
 
     implementation(project(":feature:discover"))
     implementation(project(":feature:favorites"))
+    implementation(project(":feature:patterndetails"))
 
     implementation(libs.androidx.compose.material3.adaptive.layout)
     implementation(libs.androidx.compose.material3.adaptive.navigation)
