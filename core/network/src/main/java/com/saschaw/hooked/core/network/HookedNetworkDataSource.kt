@@ -1,8 +1,7 @@
 package com.saschaw.hooked.core.network
 
-import com.saschaw.hooked.core.model.FavoritesListPaginated
-import com.saschaw.hooked.core.model.RavelryUser
-import com.saschaw.hooked.core.model.SearchResultsPaginated
+import com.saschaw.hooked.core.model.lists.favorites.FavoritesListPaginated
+import com.saschaw.hooked.core.model.lists.search.SearchResultsPaginated
 
 interface HookedNetworkDataSource {
      suspend fun fetchFavoritesList(): FavoritesListPaginated?

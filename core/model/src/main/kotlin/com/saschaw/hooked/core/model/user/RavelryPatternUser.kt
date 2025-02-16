@@ -1,21 +1,7 @@
-package com.saschaw.hooked.core.model
+package com.saschaw.hooked.core.model.user
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-
-@Serializable
-data class RavelryUser(
-    val id: Int,
-    val username: String,
-)
-
-@Serializable
-data class PatternAuthor(
-    val id: Int,
-    val name: String,
-    val permalink: String,
-    val users: List<RavelryPatternUser>,
-)
 
 @Serializable
 data class RavelryPatternUser(

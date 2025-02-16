@@ -2,11 +2,9 @@ package com.saschaw.hooked.core.network
 
 import android.util.Log
 import com.saschaw.hooked.core.authentication.AuthenticationManager
-import com.saschaw.hooked.core.model.FavoritesListPaginated
-import com.saschaw.hooked.core.model.Paginator
-import com.saschaw.hooked.core.model.PatternListItem
-import com.saschaw.hooked.core.model.RavelryUser
-import com.saschaw.hooked.core.model.SearchResultsPaginated
+import com.saschaw.hooked.core.model.lists.favorites.FavoritesListPaginated
+import com.saschaw.hooked.core.model.user.RavelryUser
+import com.saschaw.hooked.core.model.lists.search.SearchResultsPaginated
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

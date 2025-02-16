@@ -1,4 +1,4 @@
-package com.saschaw.hooked.core.model
+package com.saschaw.hooked.core.model.user
 
 import kotlinx.serialization.Serializable
 

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.saschaw.hooked.core.data.repository.RavelrySearchRepository
-import com.saschaw.hooked.core.model.SearchWithResults
+import com.saschaw.hooked.core.model.lists.search.SearchQueryWithResults
 import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Loading
 import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Error
 import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Success
@@ -32,7 +32,7 @@ class DiscoverScreenViewModel @Inject constructor(
 
                 _uiState.value =
                     if (searchResults != null && searchResults.patterns.isNotEmpty()) {
-                        Success(SearchWithResults(query, searchResults))
+                        Success(SearchQueryWithResults(query, searchResults))
                     } else {
                         Error
                     }
@@ -52,7 +52,7 @@ class DiscoverScreenViewModel @Inject constructor(
 
                 _uiState.value =
                     if (searchResults != null && searchResults.patterns.isNotEmpty()) {
-                        Success(SearchWithResults(null, searchResults))
+                        Success(SearchQueryWithResults(null, searchResults))
                     } else {
                         Error
                     }
@@ -66,6 +66,6 @@ class DiscoverScreenViewModel @Inject constructor(
 
 sealed interface DiscoverScreenUiState {
     data object Loading : DiscoverScreenUiState
-    data class Success(val searchWithResults: SearchWithResults) : DiscoverScreenUiState
+    data class Success(val searchQueryWithResults: SearchQueryWithResults) : DiscoverScreenUiState
     data object Error : DiscoverScreenUiState
 }
