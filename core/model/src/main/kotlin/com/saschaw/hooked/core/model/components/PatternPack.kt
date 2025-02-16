@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PatternPack(
-    @SerialName("color_family_id") val colorFamilyId: String,
+    @SerialName("color_family_id") val colorFamilyId: String?,
     val colorway: String?,
     @SerialName("dye_lot") val dyeLot: String?,
     @SerialName("grams_per_skein") val gramsPerSkein: Float?,
@@ -30,8 +30,8 @@ data class PatternPack(
     @SerialName("total_paid") val totalPaid: String? = null,
     @SerialName("total_yards") val totalYards: Float?,
     @SerialName("yards_per_skein") val yardsPerSkein: Float?,
-    val yarn: PatternYarn,
+    val yarn: PatternYarn? = null,
     @SerialName("yarn_id") val yarnId: Int?,
     @SerialName("yarn_name") val yarnName: String?,
-    @SerialName("yarn_weight") val yarnWeight: String?
+    @SerialName("yarn_weight") val yarnWeight: YarnWeight? = null
 )

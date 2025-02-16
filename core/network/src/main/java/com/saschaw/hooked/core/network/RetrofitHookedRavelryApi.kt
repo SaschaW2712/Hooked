@@ -5,6 +5,7 @@ import com.saschaw.hooked.core.authentication.AuthenticationManager
 import com.saschaw.hooked.core.model.lists.favorites.FavoritesListPaginated
 import com.saschaw.hooked.core.model.user.RavelryUser
 import com.saschaw.hooked.core.model.lists.search.SearchResultsPaginated
+import com.saschaw.hooked.core.model.pattern.PatternFull
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,12 @@ interface RetrofitHookedRavelryApi {
         @Query("query") searchQuery: String,
     ): SearchResultsPaginated
 
+    @GET(value = "/patterns/{id}.json")
+    suspend fun getPatternDetails(
+        @Path("id") id: Int,
+        @Header("Authorization") accessToken: String,
+    ): PatternDetailsResponse
+
     @GET(value = "/current_user.json")
     suspend fun getCurrentUser(
         @Header("Authorization") accessToken: String,
@@ -47,6 +54,11 @@ interface RetrofitHookedRavelryApi {
 @Serializable
 data class CurrentUserResponse(
     @SerialName("user") val ravelryUser: RavelryUser
+)
+
+@Serializable
+data class PatternDetailsResponse(
+    val pattern: PatternFull?,
 )
 
 @Singleton
@@ -102,15 +114,7 @@ internal class RetrofitHookedNetwork @Inject constructor(
             }
         )
 
-        try {
-            return deferred.await()
-        } catch (e: Exception) {
-            Log.e("Network", "Error getting favorites list", e)
-            if (e is HttpException && (e.code() == 403 || e.code() == 401)) {
-                authenticationManager.invalidateAuthentication()
-            }
-            return null
-        }
+        return resultOrInvalidAuth(deferred)
     }
 
     override suspend fun search(query: String): SearchResultsPaginated? {
@@ -134,15 +138,31 @@ internal class RetrofitHookedNetwork @Inject constructor(
             }
         )
 
-        return try {
-            deferred.await()
-        } catch (e: Exception) {
-            Log.e("Network", "Error getting search results", e)
-            if (e is HttpException && (e.code() == 403 || e.code() == 401)) {
-                authenticationManager.invalidateAuthentication()
+        return resultOrInvalidAuth(deferred)
+    }
+
+    override suspend fun fetchPatternDetails(id: Int): PatternDetailsResponse? {
+        val deferred = CompletableDeferred<PatternDetailsResponse?>()
+
+        authenticationManager.doAuthenticated(
+            function = { accessToken, _ ->
+                accessToken?.let { token ->
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            val response = networkApi.getPatternDetails(id, getAuthHeaderValue(token))
+                            deferred.complete(response)
+                        } catch (e: Exception) {
+                            deferred.completeExceptionally(e)
+                        }
+                    }
+                }
+            },
+            onFailure = {
+                deferred.completeExceptionally(it)
             }
-            null
-        }
+        )
+
+        return resultOrInvalidAuth(deferred)
     }
 
     override suspend fun fetchCurrentUsername(): String? {
@@ -167,10 +187,14 @@ internal class RetrofitHookedNetwork @Inject constructor(
             }
         )
 
+        return resultOrInvalidAuth(deferred)
+    }
+
+    private suspend fun <T> resultOrInvalidAuth(deferred: CompletableDeferred<T>): T? {
         return try {
             deferred.await()
         } catch (e: Exception) {
-            Log.e("Network", "Error getting username", e)
+            Log.e("Network", "Error getting result", e)
             if (e is HttpException && (e.code() == 403 || e.code() == 401)) {
                 authenticationManager.invalidateAuthentication()
             }

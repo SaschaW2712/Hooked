@@ -6,5 +6,6 @@ import com.saschaw.hooked.core.model.lists.search.SearchResultsPaginated
 interface HookedNetworkDataSource {
      suspend fun fetchFavoritesList(): FavoritesListPaginated?
      suspend fun search(query: String): SearchResultsPaginated?
+     suspend fun fetchPatternDetails(id: Int): PatternDetailsResponse?
      suspend fun fetchCurrentUsername(): String?
 }
