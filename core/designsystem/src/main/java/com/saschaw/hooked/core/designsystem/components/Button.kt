@@ -285,9 +285,6 @@ fun HookedButtonLeadingIconPreview() {
     }
 }
 
-/**
- * Now in Android button default values.
- */
 object HookedButtonDefaults {
     // OutlinedButton border color doesn't respect disabled state by default
     const val DISABLED_OUTLINED_BUTTON_BORDER_ALPHA = 0.12f
