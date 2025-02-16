@@ -30,8 +30,8 @@ data class PatternPack(
     @SerialName("total_paid") val totalPaid: String? = null,
     @SerialName("total_yards") val totalYards: Float?,
     @SerialName("yards_per_skein") val yardsPerSkein: Float?,
-    val yarn: PatternYarn,
+    val yarn: PatternYarn? = null,
     @SerialName("yarn_id") val yarnId: Int?,
     @SerialName("yarn_name") val yarnName: String?,
-    @SerialName("yarn_weight") val yarnWeight: YarnWeight?
+    @SerialName("yarn_weight") val yarnWeight: YarnWeight? = null
 )
