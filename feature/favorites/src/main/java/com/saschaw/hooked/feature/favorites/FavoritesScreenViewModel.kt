@@ -3,7 +3,7 @@ package com.saschaw.hooked.feature.favorites
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.saschaw.hooked.core.data.repository.RavelryUserDataRepository
+import com.saschaw.hooked.core.data.repository.RavelryFavoritesRepository
 import com.saschaw.hooked.core.model.lists.favorites.FavoritesListPaginated
 import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Error
 import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Loading
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesScreenViewModel @Inject constructor(
-    private val ravelryUserDataRepository: RavelryUserDataRepository
+    private val favoritesRepository: RavelryFavoritesRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<FavoritesScreenUiState>(Loading)
     val uiState: StateFlow<FavoritesScreenUiState> = _uiState.asStateFlow()
@@ -31,7 +31,7 @@ class FavoritesScreenViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                val favorites = ravelryUserDataRepository.fetchFavoritesList()
+                val favorites = favoritesRepository.fetchFavoritesList()
 
                 _uiState.value = if (favorites != null) Success(favorites) else Error
             } catch (e: Exception) {
