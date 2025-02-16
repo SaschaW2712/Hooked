@@ -1,4 +1,4 @@
-package com.saschaw.hooked.core.model
+package com.saschaw.hooked.core.model.lists
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

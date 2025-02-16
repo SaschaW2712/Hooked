@@ -7,6 +7,10 @@ plugins {
 android {
     namespace = "com.saschaw.hooked.core.model"
     compileSdk = 34
+
+    defaultConfig {
+        minSdk = 26
+    }
 }
 
 dependencies {

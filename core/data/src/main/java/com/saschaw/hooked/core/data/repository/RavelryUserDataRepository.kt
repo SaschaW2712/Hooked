@@ -1,6 +1,6 @@
 package com.saschaw.hooked.core.data.repository
 
-import com.saschaw.hooked.core.model.FavoritesListPaginated
+import com.saschaw.hooked.core.model.lists.favorites.FavoritesListPaginated
 import com.saschaw.hooked.core.network.HookedNetworkDataSource
 import javax.inject.Inject
 

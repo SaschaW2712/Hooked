@@ -9,13 +9,13 @@ plugins {
 
 android {
     namespace = "com.saschaw.hooked"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.saschaw.hooked"
         minSdk = 27
         multiDexEnabled = true
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "0.1"
 
@@ -68,9 +68,11 @@ dependencies {
 
     implementation(project(":feature:discover"))
     implementation(project(":feature:favorites"))
+    implementation(project(":feature:patterndetails"))
 
     implementation(libs.androidx.compose.material3.adaptive.layout)
     implementation(libs.androidx.compose.material3.adaptive.navigation)
+    implementation(libs.androidx.material.navigation)
     implementation(libs.androidx.adaptive.android)
     implementation(libs.androidx.core.splashScreen)
 

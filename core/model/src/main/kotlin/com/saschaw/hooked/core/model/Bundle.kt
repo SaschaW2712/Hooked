@@ -1,5 +1,7 @@
 package com.saschaw.hooked.core.model
 
+import com.saschaw.hooked.core.model.components.RavelryPhoto
+import com.saschaw.hooked.core.model.user.RavelryPatternUser
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

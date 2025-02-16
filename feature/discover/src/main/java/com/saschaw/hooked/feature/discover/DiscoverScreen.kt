@@ -36,9 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
@@ -49,7 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.saschaw.hooked.core.designsystem.HookedIcons
 import com.saschaw.hooked.core.designsystem.components.PatternCard
 import com.saschaw.hooked.core.designsystem.theme.HookedTheme
-import com.saschaw.hooked.core.model.PatternListItem
+import com.saschaw.hooked.core.model.pattern.PatternListItem
 import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Error
 import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Success
 
@@ -58,6 +56,7 @@ import com.saschaw.hooked.feature.discover.DiscoverScreenUiState.Success
 @Composable
 fun DiscoverScreen(
     viewModel: DiscoverScreenViewModel = hiltViewModel(),
+    onPatternClick: (Int) -> Unit
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
@@ -120,14 +119,15 @@ fun DiscoverScreen(
             exit = exitAnimation
         ) {
 
-            val patterns = (uiState as? Success)?.searchWithResults?.results?.patterns
-            val lastSearchQuery = (uiState as? Success)?.searchWithResults?.query
+            val patterns = (uiState as? Success)?.searchQueryWithResults?.results?.patterns
+            val lastSearchQuery = (uiState as? Success)?.searchQueryWithResults?.query
 
             // Empty list case is impossible in practice unless actively transitioning
             DiscoverScreenSuccessContent(
                 contentModifier,
                 lastSearchQuery,
-                patterns ?: emptyList()
+                patterns ?: emptyList(),
+                onPatternClick,
             )
         }
     }
@@ -193,10 +193,8 @@ fun DiscoverScreenSuccessContent(
     modifier: Modifier = Modifier,
     searchQuery: String?,
     patterns: List<PatternListItem>,
+    onPatternClick: (Int) -> Unit,
 ) {
-    val uriHandler = LocalUriHandler.current
-    val context = LocalContext.current
-
     LazyColumn(
         modifier,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
@@ -217,11 +215,7 @@ fun DiscoverScreenSuccessContent(
 
         items(patterns) { pattern ->
             PatternCard(Modifier.fillMaxWidth(), pattern = pattern, onClick = {
-                uriHandler.openUri(
-                    context.getString(
-                        R.string.ravelry_pattern_base_url,
-                        pattern.permalink
-                    ))
+                onPatternClick(pattern.id)
             })
         }
     }
@@ -232,7 +226,7 @@ fun DiscoverScreenSuccessContent(
 private fun DiscoverScreenPreview() {
     HookedTheme {
         Surface {
-            DiscoverScreen()
+            DiscoverScreen(onPatternClick = {})
         }
     }
 }

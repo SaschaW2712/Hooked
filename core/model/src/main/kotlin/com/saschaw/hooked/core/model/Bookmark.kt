@@ -1,5 +1,6 @@
 package com.saschaw.hooked.core.model
 
+import com.saschaw.hooked.core.model.pattern.PatternListItem
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

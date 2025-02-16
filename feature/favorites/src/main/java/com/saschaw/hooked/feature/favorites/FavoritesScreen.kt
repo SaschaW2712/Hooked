@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.saschaw.hooked.core.designsystem.components.PatternCard
-import com.saschaw.hooked.core.model.FavoritesListItem
+import com.saschaw.hooked.core.model.lists.favorites.FavoritesListItem
 import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Error
 import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Loading
 import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Success
@@ -136,6 +136,7 @@ fun FavoritesScreenSuccessContent(
     ) {
         items(currentPageFavorites) { pattern ->
             PatternCard(Modifier.fillMaxWidth(), pattern = pattern, onClick = {
+                // TODO HKD-30: Open pattern details natively
                 uriHandler.openUri(
                     context.getString(
                         R.string.ravelry_pattern_base_url,
