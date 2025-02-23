@@ -5,9 +5,9 @@ A simple Ravelry aid, integrating with the [Ravelry API](https://www.ravelry.com
 
 Ravelry is a website for knitters and crocheters that provides a way to find and purchase patterns, track active projects, and connect with other people in the fibre arts communities. The website itself has a wide variety of features, but I've always found the site to be frustrating and clumsy to use in a mobile web browser.
 
-As no official Ravelry mobile app exists, they have made an API for integrating with their site available, for other developers to use for creation of derivative applications, free of charge. Hooked uses this API, to provide basic functionality outlined in Features below.
+As no official Ravelry mobile app exists, they have made an API for integrating with their site available, for other developers to use for creation of derivative applications, free of charge. Hooked uses this API, to provide basic functionality outlined in [Features](#features).
 
-This application currently supports native Android with a fully Jetpack Compose based UI, following industry best practices and modern frameworks as endorsed by Google and the official Android Developer documentation. The architecture of the app is explained in Architecture, also below.
+This application currently supports native Android with a fully Jetpack Compose based UI, following industry best practices and modern frameworks as endorsed by Google and the official Android Developer documentation. The architecture of the app is explained in [Architecture](#architecture).
 
 
 ## Features
