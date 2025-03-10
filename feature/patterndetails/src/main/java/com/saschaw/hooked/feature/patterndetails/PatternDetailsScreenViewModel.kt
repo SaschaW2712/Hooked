@@ -48,6 +48,7 @@ class PatternDetailsScreenViewModel @Inject constructor(
                             authorName = result.patternAuthor?.name,
                             authorPhotoUrl = result.patternAuthor?.users?.firstOrNull()?.photoUrl,
                             title = result.name,
+                            patternPermalink = result.permalink,
                             isFavorited = result.personalAttributes?.favorited ?: false,
                             price = result.displayPrice,
                             favoriteId = favoriteId
@@ -91,6 +92,7 @@ sealed interface PatternDetailsScreenUiState {
         val authorName: String?,
         val authorPhotoUrl: String?,
         val title: String,
+        val patternPermalink: String,
         val isFavorited: Boolean,
         val favoriteId: Int? = null,
         val price: String
