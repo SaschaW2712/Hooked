@@ -30,7 +30,7 @@ fun HookedNavHost(
 
             patternDetailsScreen(onDismiss = navController::popBackStack)
 
-            favoritesScreen()
+            favoritesScreen(onPatternClick = navController::navigateToPatternDetails)
         }
     }
 }

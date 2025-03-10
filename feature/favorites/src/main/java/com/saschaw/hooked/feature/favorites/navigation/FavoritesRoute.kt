@@ -12,8 +12,8 @@ data object FavoritesRoute
 
 fun NavController.navigateToFavorites(navOptions: NavOptions) = navigate(route = FavoritesRoute, navOptions)
 
-fun NavGraphBuilder.favoritesScreen() {
+fun NavGraphBuilder.favoritesScreen(onPatternClick: (Int) -> Unit) {
     composable<FavoritesRoute> {
-        FavoritesScreen()
+        FavoritesScreen(onPatternClick = onPatternClick)
     }
 }
