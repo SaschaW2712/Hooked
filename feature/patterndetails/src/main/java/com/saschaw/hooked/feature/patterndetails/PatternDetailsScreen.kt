@@ -79,15 +79,15 @@ fun PatternDetailsScreen(
         AnimatedVisibility(
             visible = uiState is PatternDetailsScreenUiState.Success,
         ) {
-            (uiState as? PatternDetailsScreenUiState.Success)?.patternDetails?.let {
+            (uiState as? PatternDetailsScreenUiState.Success)?.let {
                 PatternDetailsScreenLoaded(
-                    patternPhotoUrl = it.photos?.firstOrNull()?.mediumUrl,
-                    authorName = it.patternAuthor?.name,
-                    authorPhotoUrl = it.patternAuthor?.users?.firstOrNull()?.photoUrl,
-                    title = it.name,
-                    isFavorited = it.personalAttributes?.favorited,
-                    price = it.displayPrice,
-                    onClickLike = { },
+                    patternPhotoUrl = it.photoUrl,
+                    authorName = it.authorName,
+                    authorPhotoUrl = it.authorPhotoUrl,
+                    title = it.title ,
+                    isFavorited = it.isFavorited,
+                    price = it.price,
+                    onClickLike = viewModel::onLikePattern,
                     onClickPatternRavelryLink = { },
                 )
             }
