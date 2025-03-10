@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -53,6 +54,9 @@ fun PatternDetailsScreen(
     viewModel: PatternDetailsScreenViewModel = hiltViewModel(),
     onDismiss: () -> Unit,
 ) {
+    val uriHandler = LocalUriHandler.current
+    val context = LocalContext.current
+
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
     LaunchedEffect(Unit) { viewModel.onLoadPattern() }
@@ -79,16 +83,22 @@ fun PatternDetailsScreen(
         AnimatedVisibility(
             visible = uiState is PatternDetailsScreenUiState.Success,
         ) {
-            (uiState as? PatternDetailsScreenUiState.Success)?.patternDetails?.let {
+            (uiState as? PatternDetailsScreenUiState.Success)?.let {
                 PatternDetailsScreenLoaded(
-                    patternPhotoUrl = it.photos?.firstOrNull()?.mediumUrl,
-                    authorName = it.patternAuthor?.name,
-                    authorPhotoUrl = it.patternAuthor?.users?.firstOrNull()?.photoUrl,
-                    title = it.name,
-                    isFavorited = it.personalAttributes?.favorited,
-                    price = it.displayPrice,
-                    onClickLike = { },
-                    onClickPatternRavelryLink = { },
+                    patternPhotoUrl = it.photoUrl,
+                    authorName = it.authorName,
+                    authorPhotoUrl = it.authorPhotoUrl,
+                    title = it.title ,
+                    isFavorited = it.isFavorited,
+                    price = it.price,
+                    onClickLike = viewModel::onLikePattern,
+                    onClickPatternRavelryLink = {
+                        uriHandler.openUri(
+                        context.getString(
+                            R.string.ravelry_pattern_base_url,
+                            it.patternPermalink
+                        ))
+                    },
                 )
             }
         }
@@ -187,7 +197,9 @@ fun PatternDetailsScreenLoaded(
             }
 
             Row(
-                modifier = Modifier.padding(8.dp).height(IntrinsicSize.Min),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .height(IntrinsicSize.Min),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
             ) {

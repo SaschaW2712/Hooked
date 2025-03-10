@@ -28,8 +28,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign.Companion.Center
 import androidx.compose.ui.unit.dp
@@ -46,6 +44,7 @@ import com.saschaw.hooked.feature.favorites.FavoritesScreenUiState.Success
 @Composable
 fun FavoritesScreen(
     viewModel: FavoritesScreenViewModel = hiltViewModel(),
+    onPatternClick: (Int) -> Unit,
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
@@ -96,7 +95,8 @@ fun FavoritesScreen(
             // Empty list case is impossible in practice unless actively transitioning
             FavoritesScreenSuccessContent(
                 contentModifier,
-                favorites ?: emptyList()
+                favorites ?: emptyList(),
+                onPatternClick
             )
         }
     }
@@ -123,10 +123,8 @@ fun FavoritesScreenErrorContent(
 fun FavoritesScreenSuccessContent(
     modifier: Modifier = Modifier,
     favoritesList: List<FavoritesListItem>,
+    onPatternClick: (Int) -> Unit,
 ) {
-    val uriHandler = LocalUriHandler.current
-    val context = LocalContext.current
-
     val currentPageFavorites = favoritesList.map { it.favorited }
     LazyColumn(
         modifier,
@@ -136,13 +134,7 @@ fun FavoritesScreenSuccessContent(
     ) {
         items(currentPageFavorites) { pattern ->
             PatternCard(Modifier.fillMaxWidth(), pattern = pattern, onClick = {
-                // TODO HKD-30: Open pattern details natively
-                uriHandler.openUri(
-                    context.getString(
-                        R.string.ravelry_pattern_base_url,
-                        pattern.permalink
-                    ))
-
+                onPatternClick(pattern.id)
             })
         }
     }
