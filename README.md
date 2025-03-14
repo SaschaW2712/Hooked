@@ -37,6 +37,11 @@ Modules are separated between `core` and `feature`:
 - `feature` modules provide distinct features of the app, such as Onboarding, Favorites, or the Discover page.
 - `feature` modules cannot depend on other `feature` modules, only `core`.
 
-
+![alt_text](https://github.com/SaschaW2712/Hooked/blob/main/documentation/module-architecture-diagram.png "Module architecture diagram of Hooked")
 
 ## Development Processes
+This project was developed following standard agile practices with a Kanban structure. Work is tracked in a Jira board with a small backlog of tasks organised into Epics, with pull requests and commits tracked using the Jira Github integration. Planning and minimal technical documentation is stored in a Confluence space dedicated to the project.
+
+Commit messages are written loosely following [Conventional Commits v1.0.0](https://www.conventionalcommits.org/en/v1.0.0/). This provides easier parsing of types of commits at a glance, and links all commits with the ID of the ticket that they relate to, to maintain future context of why code decisions were made.
+
+Figma was used for some early wireframes, though all higher-fidelity work was developed through iterative Compsoe prototyping and testing.
